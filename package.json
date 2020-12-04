@@ -1,0 +1,42 @@
+{
+  "name": "facebookprofilepost-it",
+  "version": "1.0.0",
+  "description": "Chrome and Firefox extension to added notes to faceabook's profile pages.",
+  "main": "main.js",
+  "dependencies": {
+    "browserify": "^16.2.3",
+    "gulp": "^4.0.0",
+    "gulp-images-resizer": "0.0.7",
+    "gulp-json-editor": "^2.5.2",
+    "gulp-rename": "^1.4.0",
+    "gulp-sourcemaps": "^2.6.5",
+    "gulp-typescript": "^5.0.1",
+    "gulp-uglify": "^3.0.2",
+    "require-dir": "^1.2.0",
+    "tsify": "^4.0.1",
+    "typescript": "^3.4.5",
+    "vinyl-buffer": "^1.0.1",
+    "vinyl-source-stream": "^2.0.0"
+  },
+  "devDependencies": {
+    "gulp-concat": "^2.6.1",
+    "gulp-replace": "^1.0.0",
+    "gulp-sass": "^4.0.2",
+    "gulp-zip": "^5.0.1",
+    "node-sass": "^4.12.0"
+  },
+  "scripts": {
+    "SetExtensionVersion": "node -e \"require('./Scripts').SetExtensionVersion()\"",
+    "CheckExtensionVersion": "node -e \"require('./Scripts').CheckExtensionVersion()\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MrLuxan/FacebookProfilePost-it.git"
+  },
+  "author": "MrLuxan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MrLuxan/FacebookProfilePost-it/issues"
+  },
+  "homepage": "https://github.com/MrLuxan/FacebookProfilePost-it#readme"
+}
