@@ -44,11 +44,36 @@ gulp.task("ChromeManifest", function () {
              .pipe(gulp.dest(GulpVars.ChromeDist));
 });
 
-gulp.task("ChromeInsertNoteHtml", function(){
-  return gulp.src(['./src/BuildTemp/FavouriteList.ts'])
-             .pipe(replace('[FavouriteList.html]', fs.readFileSync("./src/FavouriteList.html", "utf8")))
-             .pipe(gulp.dest('./src/BuildTemp/'));
+
+
+var CopyInHtmlTasks = [];
+['FavouriteList','FavouriteItem','FavouriteButton'].forEach(function(fileName) {
+    var copyInHtmlTask = 'CopyInHtmlTask_' + fileName;
+    gulp.task(copyInHtmlTask, function(){
+        return gulp.src(['./src/BuildTemp/' + fileName + '.ts'])
+                   .pipe(replace('[' + fileName + '.html]', fs.readFileSync('./src/' + fileName + '.html', "utf8")))
+                   .pipe(gulp.dest('./src/BuildTemp/'));
+    });
+    CopyInHtmlTasks.push(copyInHtmlTask);
 });
+
+gulp.task('ChromeInsertNoteHtml', gulp.series(CopyInHtmlTasks));
+
+
+
+
+
+
+
+
+
+
+
+//gulp.task("ChromeInsertFavouriteListHtml", function(){
+//  return gulp.src(['./src/BuildTemp/FavouriteList.ts'])
+//             .pipe(replace('[FavouriteList.html]', fs.readFileSync("./src/FavouriteList.html", "utf8")))
+//             .pipe(gulp.dest('./src/BuildTemp/'));
+//});
 
 gulp.task('ChromeBuildJs', gulp.series( 
   function () { return gulp.src('./src/*.ts').pipe(gulp.dest('./src/BuildTemp/'))},
