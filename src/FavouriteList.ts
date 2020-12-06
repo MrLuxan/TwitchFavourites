@@ -16,6 +16,23 @@ export class FavouriteList extends UiElement {
 
 	FavouriteList : HTMLElement = null;
 
+	FavouriteItems : FavouriteItem[] = [];
+
+	UpdatePause : boolean = false;
+
+	UpdateList()
+	{
+
+		console.log(this.FavouriteItems);
+
+		if(!this.UpdatePause)
+		{
+			this.FavouriteItems.forEach(element => {
+				element.Update();
+			});
+		}
+	}
+
     constructor(userName : string, isNewLayout : boolean)
     {
 		super();
@@ -28,13 +45,18 @@ export class FavouriteList extends UiElement {
 			this.FavouriteList = this.DomElement.querySelector('#FavouriteList');
 
 
-			let item : FavouriteItem = new FavouriteItem('Rob');
+			this.FavouriteItems.push(new FavouriteItem(this,'85875635'));
+			this.FavouriteItems.push(new FavouriteItem(this,'276657249'));
+			this.FavouriteItems.push(new FavouriteItem(this,'145622021'));
 
-			this.FavouriteList.append(item.DomElement);
 
+			console.log(this.FavouriteItems);
 
+			let timer = setInterval(this.UpdateList, 1000 * 60 * 2);
 
-			console.log(this.FavouriteList);
-		
+			//let item2 : FavouriteItem = new FavouriteItem('Rob2');
+			//this.FavouriteList.append(item2.DomElement);
+
+			//item2.Update();
 	}
 }
