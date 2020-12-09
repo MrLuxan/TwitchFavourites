@@ -22,13 +22,14 @@ export class FavouriteList extends UiElement {
 
 	UpdateList()
 	{
-
+		console.log('update');
 		console.log(this.FavouriteItems);
+		console.log(this);
 
 		if(!this.UpdatePause)
 		{
-			this.FavouriteItems.forEach(element => {
-				element.Update();
+			this.FavouriteItems.forEach(item => {
+				item.Update();
 			});
 		}
 	}
@@ -44,19 +45,12 @@ export class FavouriteList extends UiElement {
 			this.DomElement = this.htmlToElement(listhtml);
 			this.FavouriteList = this.DomElement.querySelector('#FavouriteList');
 
+			let ids = ['145622021','85875635','276657249','54808447'] 
 
-			this.FavouriteItems.push(new FavouriteItem(this,'85875635'));
-			this.FavouriteItems.push(new FavouriteItem(this,'276657249'));
-			this.FavouriteItems.push(new FavouriteItem(this,'145622021'));
+			ids.forEach(id => {
+				this.FavouriteItems.push(new FavouriteItem(this,id));
+			});
 
-
-			console.log(this.FavouriteItems);
-
-			let timer = setInterval(this.UpdateList, 1000 * 60 * 2);
-
-			//let item2 : FavouriteItem = new FavouriteItem('Rob2');
-			//this.FavouriteList.append(item2.DomElement);
-
-			//item2.Update();
+			let timer = setInterval(() => {this.UpdateList()}, 1000 * 60 * 1);
 	}
 }

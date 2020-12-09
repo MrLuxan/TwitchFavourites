@@ -2,7 +2,7 @@
     <div>
        <div class="side-nav-card tw-relative" data-test-selector="side-nav-card">
           <a class="side-nav-card__link tw-align-items-center tw-flex tw-flex-nowrap tw-full-width tw-interactive tw-link tw-link--hover-underline-none tw-pd-x-1 tw-pd-y-05" data-a-id="followed-channel-0" data-test-selector="followed-channel" href="/${name}">
-             <div class="side-nav-card__avatar tw-align-items-center tw-flex-shrink-0">
+             <div class="${imageClass} tw-align-items-center tw-flex-shrink-0">
                 <figure aria-label="${name}" class="tw-avatar tw-avatar--size-30">
                    <img class="tw-block tw-border-radius-rounded tw-image tw-image-avatar" alt="${name}" src="${logo}">
                 </figure>
@@ -20,16 +20,19 @@
                       </p>
                    </div>
                 </div>
-                <div class="side-nav-card__live-status tw-flex-shrink-0 tw-mg-l-05" data-a-target="side-nav-live-status">
-                   <div class="tw-align-items-center tw-flex">
-                      <div class="tw-border-radius-rounded tw-channel-status-indicator tw-channel-status-indicator--live tw-channel-status-indicator--small tw-inline-block tw-relative" data-test-selector="0">
-                      </div>
-                      <div class="tw-mg-l-05">
-                         <span data-test-selector="1" aria-label="{viewers} viewers" class="tw-c-text-alt tw-font-size-6 FavItemViewCount">
-                         ${viewers}</span>
-                      </div>
-                   </div>
-                </div>
+                <div ${onlinetext} class="side-nav-card__live-status tw-flex-shrink-0 tw-mg-l-05" data-a-target="side-nav-live-status">
+                  <div class="tw-align-items-center tw-flex">
+                     <div class="tw-border-radius-rounded tw-channel-status-indicator tw-channel-status-indicator--live tw-channel-status-indicator--small tw-inline-block tw-relative" data-test-selector="0">
+                     </div>
+                     <div class="tw-mg-l-05">
+                        <span data-test-selector="1" aria-label="{viewers} viewers" class="tw-c-text-alt tw-font-size-6 FavItemViewCount">
+                        ${viewers}</span>
+                     </div>
+                  </div>
+               </div>
+               <div ${offlineetext} class="side-nav-card__live-status tw-flex-shrink-0 tw-mg-l-05" data-a-target="side-nav-live-status">
+                 <span class="tw-c-text-alt tw-font-size-6">Offline</span>
+               </div>
              </div>
           </a>
        </div>

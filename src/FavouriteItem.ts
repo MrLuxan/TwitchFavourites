@@ -14,6 +14,8 @@ export class FavouriteItem extends UiElement {
 	User : User;
 	Stream : ChannelData;
 
+	k : number = 1;
+
 	get ViewCount() : string
 	{	
 		if(this.Stream.stream == null)
@@ -46,6 +48,8 @@ export class FavouriteItem extends UiElement {
 		request.onload = function(){
 			if (request.status >= 200 && request.status < 400) 
 			{
+				console.log(request);
+				console.log(request.getAllResponseHeaders());
 				callback(request.responseText);
 			}
 		}
@@ -75,16 +79,26 @@ export class FavouriteItem extends UiElement {
 	Update() {
 		if(this.User != null)
 		{
-			this.SetStreamData(this.User._id, () =>{
-				let name = "HIHI";//this.User.display_name;
-				let logo = this.User.logo;
-				let game = "CODECODE";//this.Game;
-				let viewers = "1";//this.ViewCount;
+			this.k++;
 
-				let itemHtml : string = `[FavouriteItem.html]`;
-				this.DomElement.outerHTML = itemHtml;
+			this.SetStreamData(this.User._id, () =>{
+				this.DomElement.innerHTML = this.GetListElement().innerHTML;
 			});
 		}
+	}
+
+	GetListElement() : HTMLElement
+	{
+		let name = this.User.display_name;
+		let logo = this.User.logo;
+		let game = this.Game;
+		let viewers = this.ViewCount;
+		let imageClass = 'side-nav-card__avatar' + (this.Stream.stream == null ? '--offline' : '');
+		let onlinetext = (this.Stream.stream == null ? 'style="display:none"' : '');
+		let offlineetext = (this.Stream.stream == null ? '' : 'style="display:none"');
+
+		let itemHtml : string = `[FavouriteItem.html]`;
+		return this.htmlToElement(itemHtml);
 	}
 
     constructor(list : FavouriteList, ChannelID : string)
@@ -95,15 +109,7 @@ export class FavouriteItem extends UiElement {
 
 		this.SetUserData(ChannelID, () => {
 			this.SetStreamData(ChannelID, () =>{
-				// do the ui
-
-				let name = this.User.display_name;
-				let logo = this.User.logo;
-				let game = this.Game;
-				let viewers = this.ViewCount;
-	
-				let itemHtml : string = `[FavouriteItem.html]`;
-				this.DomElement = this.htmlToElement(itemHtml);
+				this.DomElement = this.GetListElement();
 				this.List.FavouriteList.append(this.DomElement);
 			})
 		});
