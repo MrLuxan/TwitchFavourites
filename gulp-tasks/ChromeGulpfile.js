@@ -50,45 +50,44 @@ var CopyInHtmlTasks = [];
 ['FavouriteList','FavouriteItem','FavouriteButton'].forEach(function(fileName) {
     var copyInHtmlTask = 'CopyInHtmlTask_' + fileName;
     gulp.task(copyInHtmlTask, function(){
-        return gulp.src(['./src/BuildTemp/' + fileName + '.ts'])
+        return gulp.src(['./Build/' + fileName + '.ts'])
                    .pipe(replace('[' + fileName + '.html]', fs.readFileSync('./src/' + fileName + '.html', "utf8")))
-                   .pipe(gulp.dest('./src/BuildTemp/'));
+                   .pipe(gulp.dest('./Build/'));
     });
     CopyInHtmlTasks.push(copyInHtmlTask);
 });
 
 gulp.task('ChromeInsertNoteHtml', gulp.series(CopyInHtmlTasks));
 
-
-
-
-
-
-
-
-
-
-
-//gulp.task("ChromeInsertFavouriteListHtml", function(){
-//  return gulp.src(['./src/BuildTemp/FavouriteList.ts'])
-//             .pipe(replace('[FavouriteList.html]', fs.readFileSync("./src/FavouriteList.html", "utf8")))
-//             .pipe(gulp.dest('./src/BuildTemp/'));
-//});
-
 gulp.task('ChromeBuildJs', gulp.series( 
-  function () { return gulp.src('./src/*.ts').pipe(gulp.dest('./src/BuildTemp/'))},
-  function () { return gulp.src('./src/Chrome/*.ts').pipe(gulp.dest('./src/BuildTemp/'))},
+  function () { return gulp.src('./src/*.ts').pipe(gulp.dest('./Build/'))},
+  function () { return gulp.src('./src/Chrome/*.ts').pipe(gulp.dest('./Build/'))},
   'ChromeInsertNoteHtml',
   function () { return browserify({
                   basedir: '.',
                   debug: true,
-                  entries: ["src/BuildTemp/Main.ts"],
+                  entries: ["./Build/ContentScript.ts"],
                   cache: {},
                   packageCache: {}
               })
               .plugin(tsify)
               .bundle()
               .pipe(source('contentscript.js'))
+              .pipe(buffer())
+              .pipe(sourcemaps.init({loadMaps: true}))
+              //.pipe(uglify()) // not allowed to uglify chrome extension
+              .pipe(sourcemaps.write('./'))
+              .pipe(gulp.dest(GulpVars.ChromeDist))},
+  function () { return browserify({
+                  basedir: '.',
+                  debug: true,
+                  entries: ["./Build/BackgroundScript.ts"],
+                  cache: {},
+                  packageCache: {}
+              })
+              .plugin(tsify)
+              .bundle()
+              .pipe(source('backgroundscript.js'))
               .pipe(buffer())
               .pipe(sourcemaps.init({loadMaps: true}))
               //.pipe(uglify()) // not allowed to uglify chrome extension

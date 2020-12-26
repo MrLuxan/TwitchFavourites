@@ -2,5 +2,5 @@ node_modules
 package-lock.json
 Chrome extension
 Firefox extension
-src/BuildTemp
 Packed
+Build

@@ -1,7 +1,6 @@
 import { UiElement } from "./UiElement";
-import { DataStore } from "./DataStore"
-
 import { FavouriteItem} from "./FavouriteItem";
+import { Streamer } from './Streamer';
 
 declare var chrome: any;
 
@@ -18,39 +17,28 @@ export class FavouriteList extends UiElement {
 
 	FavouriteItems : FavouriteItem[] = [];
 
-	UpdatePause : boolean = false;
-
-	UpdateList()
+	BuildList(streamerList : Streamer[])
 	{
-		console.log('update');
-		console.log(this.FavouriteItems);
-		console.log(this);
+		let listhtml : string = `[FavouriteList.html]`;
 
-		if(!this.UpdatePause)
-		{
-			this.FavouriteItems.forEach(item => {
-				item.Update();
-			});
-		}
+		let favlist = this.htmlToElement(listhtml);
+		let list = favlist.querySelector('#FavouriteList');
+
+		streamerList.forEach(streamer => {
+			this.FavouriteItems.push(new FavouriteItem(this,list,streamer));
+		});
+
+		return favlist; 
 	}
 
-    constructor(userName : string, isNewLayout : boolean)
+	UpdateList(streamerList : Streamer[])
+	{
+		this.DomElement.innerHTML = this.BuildList(streamerList).innerHTML;
+	}
+
+    constructor(streamerList : Streamer[])
     {
 		super();
-	
-		this.UserName = userName;
-
-			let listhtml : string = `[FavouriteList.html]`;
-
-			this.DomElement = this.htmlToElement(listhtml);
-			this.FavouriteList = this.DomElement.querySelector('#FavouriteList');
-
-			let ids = ['145622021','85875635','276657249','54808447'] 
-
-			ids.forEach(id => {
-				this.FavouriteItems.push(new FavouriteItem(this,id));
-			});
-
-			let timer = setInterval(() => {this.UpdateList()}, 1000 * 60 * 1);
+		this.DomElement = this.BuildList(streamerList);
 	}
 }
