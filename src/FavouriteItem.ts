@@ -1,8 +1,5 @@
 import { UiElement } from "./UiElement";
-import { DataStore } from "./DataStore"
 
-import { ChannelData,Stream,Channel,Preview } from "./InterfaceStream";
-import { User} from "./InterfaceUser";
 import { FavouriteList } from "./FavouriteList";
 import { Streamer } from "./Streamer";
 
@@ -46,7 +43,7 @@ export class FavouriteItem extends UiElement {
 		let viewers = this.ViewCount;
 		let imageClass = 'side-nav-card__avatar' + (this.Streamer.Stream == null ? '--offline' : '');
 		let onlinetext = (this.Streamer.Stream == null ? 'style="display:none"' : '');
-		let offlineetext = (this.Streamer.Stream == null ? '' : 'style="display:none"');
+		let offlinetext = (this.Streamer.Stream == null ? '' : 'style="display:none"');
 
 		let itemHtml : string = `[FavouriteItem.html]`;
 		return this.htmlToElement(itemHtml);

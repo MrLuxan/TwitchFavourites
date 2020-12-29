@@ -1,21 +1,34 @@
-declare var chrome: any;
 export module DataStore {
-
-    export enum ReminderOption { Never, Days, Saves }
-    export enum OnDupOption { KeepCurrent, UseBackup, Merge }
-
     export class DataStoreClass {
     
-    AddChannel(username : string, callBack: (note: string) => void): void
-    {   
-        let usernote :string = "BaseBase";
-        callBack(usernote);
-    }
+        // LoadData(key : string, callBack: (data: string) => void): void
+        // {   
+        //     let val :any = "BaseBase";
+        
+        //     callBack(val);
+        // }
+    
+        // SaveData(key : string , data : any, callBack: (saveOk : boolean) => void): void
+        // {
+        //     console.log("B SaveUserNode");
+        // }
 
-    RemoveChannel(user : string , note : string, callBack: (saveOk : boolean) => void): void
-    {
-        console.log("B SaveUserNode");
-    }
+
+        
+        LoadData(key : string)  : Promise<any>
+        {
+            return new Promise(function (resolve,reject){
+                reject('Base Datastore called');
+            });
+        }
+
+        SaveData(key : string, data : any)
+        {
+            return new Promise(function (resolve,reject){
+                reject('Base Datastore called');
+            });
+        }
+        
 }
 
 export let DS : DataStoreClass = new DataStoreClass();

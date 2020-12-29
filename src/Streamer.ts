@@ -15,7 +15,8 @@ export class Streamer {
             };
 
             xhr.onerror = function(){
-                reject(new Error('Network error'));
+				console.log(xhr);
+				reject(new Error('Network error'));
             };
 
             xhr.open('get', url);
@@ -41,7 +42,7 @@ export class Streamer {
 						let ChannelData : ChannelData = JSON.parse(xhr.responseText);
 						s.Stream = ChannelData.stream;
 						//console.log('SetStreamByID ' + id)
-						resolve(true);
+						resolve(s.Stream);
 					} catch (error) {
 						reject(['Channel not found ' + id , error])
 					}
@@ -62,7 +63,7 @@ export class Streamer {
 					try {
 						s.User = JSON.parse(xhr.responseText);
 						//console.log('SetUserByID ' + id);
-						resolve(true);
+						resolve(s.User);
 					} catch (error) {
 						reject(['Channel not found ' + id , error])
 					}
@@ -80,24 +81,4 @@ export class Streamer {
 	{
 		return [this.SetUserByID(id),this.SetStreamByID(id)];
 	}
-
-    constructor()
-    {
-		/*
-		this.User._id = id;
-
-		Promise.all([this.SetUserByID(id),this.SetStreamByID(id)])
-		.then((result) => {
-			this.User = result[0];
-			this.Stream = result[1];
-
-			console.log(this.User,this.Stream);
-		})
-        .catch(error => { 
-            console.log('error');
-            console.error(error)
-		});
-		*/
-    }
-
 }

@@ -1,4 +1,6 @@
 import {Streamer} from "./Streamer"
+import {DataStore} from "./DataStore";
+declare var chrome : any;
 
 
 export class StreamerHub
@@ -7,68 +9,69 @@ export class StreamerHub
     
     LoadStreamers()
     {
-      let ids = ['9092112', '145622021','85875635','276657249','54808447']; 
+      let sers = this.Streamers;
 
-      let promises : Promise<void>[] = [];
-			ids.forEach(id => {
-        let newStream = new Streamer();
-        this.Streamers.push(newStream);
-        newStream.Set(id).forEach(e => {
-          promises.push(e);
+      DataStore.DS.LoadData('ids')
+      .then((savedid : Array<string>) =>{ 
+
+        let ps : Promise<any>[]  = [];
+        savedid.forEach((id: string) => {
+          let newStream = new Streamer();
+          ps.push(newStream.SetStreamByID(id));
+          ps.push(newStream.SetUserByID(id));
+          sers.push(newStream);
         });
-      });
-
-      Promise.all(promises)
-      .then((res) =>{
-
-        console.log(res);
-
-        this.Streamers.forEach(element => {
-          console.log(element);
+  
+        Promise.all(ps).then((val) =>{
+          console.log('Load ok',val);
+        }).catch((error) => {
+          console.log('load error',error)
         });
-
-        console.log('load');
-        //callBack();
-      }
-      );
-      
-
-
-
+      })
+      .catch((error) => console.log('loaderror',error));
     }
 
     SaveStreamers()
     {
-
+      let streamerIds = [];
+      
+      this.Streamers.forEach((streamer)=>{
+        streamerIds.push(streamer.User._id);
+      });
     }
     
-    AddStreamer()
+    AddStreamer(add : Streamer)
     {
-        
+      if(this.Streamers.filter(s => s.User._id == add.User._id).length == 0)
+      {
+        this.Streamers.push(add);
+        this.SaveStreamers();
+      }
     }
 
-    RemoveStreamer()
+    RemoveStreamer(remove : Streamer)
     {
-        
+      this.Streamers = this.Streamers.filter(s => s.User._id != remove.User._id);
+      this.SaveStreamers();
     }
 
-
-
-    Refresh(callBack : any)
+    Refresh(callBack : any) : Promise<any>
     {      
+      let hub = this;
+      return new Promise(function (resolve,reject){
         let promises : Promise<void>[] = [];
-        this.Streamers.forEach(streamer => {
+        hub.Streamers.forEach(streamer => {
           promises.push(streamer.Refresh());
         });
 
         Promise.all(promises)
         .then((res) =>{
-
-          console.log(res);
-
-          //callBack();
-        }
-        );
+          resolve(hub.GetList());
+        })
+        .catch((error) =>{
+          reject(error);
+        });
+      });
     }
     
     GetList() : Streamer[]
@@ -99,7 +102,5 @@ export class StreamerHub
     {
         let offlineStreamers : Streamer[] = this.Streamers.filter(streamer => streamer.Stream == null);
         return offlineStreamers.sort(this.AlphabetiseCompare);
-    }
-
-    
+    }   
 }
