@@ -28,16 +28,16 @@
    }
 
    export interface Stream {
-       _id: number;
+       _id?: number;
        game: string;
        viewers: number;
-       video_height: number;
-       average_fps: number;
-       delay: number;
-       created_at: Date;
-       is_playlist: boolean;
-       preview: Preview;
-       channel: Channel;
+       video_height?: number;
+       average_fps?: number;
+       delay?: number;
+       created_at?: Date;
+       is_playlist?: boolean;
+       preview?: Preview;
+       channel?: Channel;
    }
 
    export interface ChannelData {
