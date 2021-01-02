@@ -51,7 +51,7 @@ export class Streamer {
         });
 	}
 
-	SetUserByID(id : string) : any
+	SetUserByID(id : string) : Promise<any>
     {
 		let s = this;
         return new Promise(function(resolve,reject){
@@ -71,6 +71,31 @@ export class Streamer {
             });
 		});
 	}
+
+    SetUserByName(channelName : string) : Promise<any>
+    {
+        let s = this;
+        return new Promise(function(resolve,reject){
+            let headers = {'Client-ID' : '5m2a2ybreyk8p8s9dhwg2s933nh3iw', 'Accept' : 'application/vnd.twitchtv.v5+json'};
+            s.RequestData('https://api.twitch.tv/kraken/users?login=' + channelName, headers).then(function (xhr :any ){
+                if(xhr.status !== 200){
+                    //console.log("There was an error");
+                    reject('Error geting user data ' + channelName);
+                }else{
+                    let data = JSON.parse(xhr.responseText);
+                    if(data.users.length == 0)
+                    {
+                        reject('Channel not found ' + channelName )
+                    }
+                    else
+                    {
+						s.User = data.users[0];
+						resolve(s.User);
+                    }
+                }
+            });
+        });
+    }	
 
 	Refresh()
 	{

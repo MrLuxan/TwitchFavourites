@@ -31,28 +31,54 @@ export class StreamerHub
       .catch((error) => console.log('loaderror',error));
     }
 
-    SaveStreamers()
+    SaveStreamers() : Promise<any>
     {
-      let streamerIds = [];
-      
-      this.Streamers.forEach((streamer)=>{
-        streamerIds.push(streamer.User._id);
+      let hub = this;
+      return new Promise(function (resolve){
+        let streamerIds : Array<string> = [];
+        hub.Streamers.forEach((streamer)=>{
+          streamerIds.push(streamer.User._id);
+        });
+
+        DataStore.DS.SaveData('ids',streamerIds)
+        .then()
+        .catch()
       });
     }
     
-    AddStreamer(add : Streamer)
+    AddStreamer(add : Streamer) : Promise<any>
     {
-      if(this.Streamers.filter(s => s.User._id == add.User._id).length == 0)
-      {
-        this.Streamers.push(add);
-        this.SaveStreamers();
-      }
+      let hub = this;
+      return new Promise(function (resolve,reject){
+        if(hub.Streamers.filter(streamer => streamer.User._id == add.User._id).length == 0)
+        {
+          hub.Streamers.push(add);
+          let resolvefunc : any = resolve;
+          hub.SaveStreamers()
+          .then(resolvefunc('Save ok'));
+        }
+        else{
+          reject('Streamer allready stored');
+        }
+      });
     }
 
-    RemoveStreamer(remove : Streamer)
+    RemoveStreamer(add : Streamer) : Promise<any>
     {
-      this.Streamers = this.Streamers.filter(s => s.User._id != remove.User._id);
-      this.SaveStreamers();
+      let hub = this;
+      return new Promise(function (resolve,reject){
+        if(hub.Streamers.filter(streamer => streamer.User._id == add.User._id).length == 1)
+        {
+          hub.Streamers = hub.Streamers.filter(streamer => streamer.User._id != add.User._id);
+
+          let resolvefunc : any = resolve;
+          hub.SaveStreamers()
+          .then(resolvefunc('Remove ok'));
+        }
+        else{
+          reject('Streamer was not stored');
+        }
+      });
     }
 
     Refresh(callBack : any) : Promise<any>

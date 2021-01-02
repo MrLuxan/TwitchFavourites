@@ -1,3 +1,4 @@
+import { message } from "../node_modules/gulp-typescript/release/utils";
 import { Streamer } from "./Streamer";
 import { UiElement } from "./UiElement";
 
@@ -25,69 +26,62 @@ export class FavouriteButton extends UiElement {
 		return button;
 	}
 
-	GetStreamer() : Streamer
+	GetStreamer() : Promise<any> // Streamer
 	{
-		let steamer = new Streamer();
+		let button = this;
+		return new Promise(function(resolve,reject){
 
-		let pagename : string = '';
-		steamer.User = {name : pagename};
+			if(button.ChannelStreamer == null)
+			{
+				let steamer = new Streamer();
+				let pagename : string = (<HTMLElement>document.querySelector(".metadata-layout__support").childNodes[0].childNodes[0])
+										.getAttribute('href').replace(/\//g,'');
 
-		let viewcountEle = document.querySelector('[data-a-target="animated-channel-viewers-count"]');
-		if(viewcountEle != null)
-		{
-			
-			let numberel = <HTMLElement>(viewcountEle.childNodes.length == 1 ? viewcountEle : viewcountEle.childNodes[0]);
-			let viewcount : number = parseInt(numberel.innerText.replace(/,/g, ''));
-			let gameplayed : string = (<HTMLElement>document.querySelector('[data-a-target="stream-game-link"]').childNodes[0]).innerText;
-			
-			console.log(viewcount);
-			console.log(gameplayed);
-			
-			steamer.Stream = {viewers : viewcount, game : gameplayed };	
-			console.log('true');
-		}
-		else
-		{
-			console.log('offile');
-		}
-
-		return steamer;
+				steamer.SetUserByName(pagename)
+				.then(()=>{
+					button.ChannelStreamer = steamer;
+					resolve(steamer);
+				})
+				.catch((error)=>{
+					console.log(error);
+				});
+			}
+			else
+			{
+				resolve(button.ChannelStreamer);
+			}
+		});
 	}
-
-
 
 	Click()
 	{
-		if(this.ChannelStreamer == null)
-			this.ChannelStreamer = this.GetStreamer();
+		let button = this;
+		this.GetStreamer()
+		.then((streamer : Streamer) =>{
 
-		if(!this.Favourited)
-		{
-			this.Port.postMessage({Command : 'Favourited',
-								   Streamer : this.ChannelStreamer});
-		}
-		else
-		{
-			this.Port.postMessage({Command : 'Unfavourited',
-								   Streamer : this.ChannelStreamer});
-		}
-
-		this.Favourited = !this.Favourited;
-		if(this.Popup != null)
-		{
-			let tooltip = this.Popup.querySelector('.tw-tooltip');
-			tooltip.innerHTML = (!this.Favourited ? 'Favourite' : 'Unfavourite');
-		}
-
-		let iconSlot = this.DomElement.querySelector('figure');
-
-		if(!this.Favourited)
-		{
-			let iconHtml : string = `[FavouriteButtonSvg.html]`;
-			let icon : HTMLElement = this.htmlToElement(iconHtml);
-			iconSlot.innerHTML = "";
-			iconSlot.append(icon);
-		}
+			button.Port.postMessage({Command : (!button.Favourited ? 'Favourited' : 'Unfavourited'),
+									 Streamer : streamer});
+	
+			this.Favourited = !this.Favourited;
+			if(this.Popup != null)
+			{
+				let tooltip = this.Popup.querySelector('.tw-tooltip');
+				tooltip.innerHTML = (!this.Favourited ? 'Favourite' : 'Unfavourite');
+			}
+	
+			let iconSlot = this.DomElement.querySelector('figure');
+	
+			if(!this.Favourited)
+			{
+				let iconHtml : string = `[FavouriteButtonSvg.html]`;
+				let icon : HTMLElement = this.htmlToElement(iconHtml);
+				iconSlot.innerHTML = "";
+				iconSlot.append(icon);
+			}
+		})
+		.catch((error) => {
+			console.log(error);
+		})
 	}
 
 	MouseEnter(event : any)

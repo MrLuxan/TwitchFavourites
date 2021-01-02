@@ -22,7 +22,7 @@ export module DataStore {
             });
         }
 
-        SaveData(key : string, data : any)
+        SaveData(key : string, data : any) : Promise<any>
         {
             return new Promise(function (resolve,reject){
                 reject('Base Datastore called');

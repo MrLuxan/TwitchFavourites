@@ -1,3 +1,4 @@
+import { message } from "../node_modules/gulp-typescript/release/utils";
 import { StreamerHub } from "./StreamerHub";
 
 export { };
@@ -47,6 +48,8 @@ function IssueListUp(){
 chrome.runtime.onConnect.addListener((port : any) => {
   port.onMessage.addListener(function(msg : any) {
 
+    console.log(msg);
+
     switch(msg.Command)
     {
       case 'Register':
@@ -57,11 +60,31 @@ chrome.runtime.onConnect.addListener((port : any) => {
         break;
 
       case 'Favourited':
-        console.log('Favourited');
+        console.log('Favourited',msg.Streamer);
+
+        hub.AddStreamer(msg.Streamer)
+        .then((data) => {
+          console.log(data)
+          IssueListUp();
+        })
+        .catch((error) =>{
+          console.log(error);
+        });
+
         break;
       
       case 'Unfavourited':
-        console.log('Unfavourited')
+        console.log('Unfavourited',msg.Streamer);
+        
+        hub.RemoveStreamer(msg.Streamer)
+        .then((data) => {
+          console.log(data)
+          IssueListUp();
+        })
+        .catch((error) =>{
+          console.log(error);
+        });
+
         break;
 
       default:
