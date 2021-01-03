@@ -13,23 +13,24 @@ export class FavouriteList extends UiElement {
 	BuildList(streamerList : Streamer[])
 	{
 		let listhtml : string = `[FavouriteList.html]`;
-		let favlist = this.htmlToElement(listhtml);
-		let list = favlist.querySelector('#FavouriteList');
+		this.DomElement = this.htmlToElement(listhtml);
 
-		streamerList.forEach(streamer => {
-			this.FavouriteItems.push(new FavouriteItem(this,list,streamer));
-		});
-
-		return favlist; 
+		this.UpdateList(streamerList)
 	}
 
 	UpdateList(streamerList : Streamer[])
 	{
 		let list = this.DomElement.querySelector('#FavouriteList');
 		list.innerHTML = "";
+
+		this.FavouriteItems = [];
 		streamerList.forEach(streamer => {
 			this.FavouriteItems.push(new FavouriteItem(this,list,streamer));
 		});
+		
+		let isWide = this.DomElement.offsetWidth > 100;				
+		let farouriteMessage = <HTMLElement>this.DomElement.querySelector('#NoFavouriteMessage');
+		farouriteMessage.style.display = (isWide && this.FavouriteItems.length == 0 ? 'block' : 'none');
 	}
 
 	ChangeSize()
@@ -40,6 +41,9 @@ export class FavouriteList extends UiElement {
 
 			let title = <HTMLElement>this.DomElement.querySelector('#FavouriteChannelsTitle');
 			title.style.display = (isWide ? 'block' : 'none');
+
+			let farouriteMessage = <HTMLElement>this.DomElement.querySelector('#NoFavouriteMessage');
+			farouriteMessage.style.display = (isWide && this.FavouriteItems.length == 0 ? 'block' : 'none');
 			
 			let icon = <HTMLElement>this.DomElement.querySelector('#FavouriteChannelsIcon');
 			icon.style.display = (isWide ? 'none' : 'block');
@@ -49,7 +53,7 @@ export class FavouriteList extends UiElement {
     constructor(streamerList : Streamer[])
     {
 		super();
-		this.DomElement = this.BuildList(streamerList);
+		this.BuildList(streamerList);
 
 		let sidebar = document.querySelector('.side-bar-contents');
 		let insetInto = sidebar.childNodes[0];

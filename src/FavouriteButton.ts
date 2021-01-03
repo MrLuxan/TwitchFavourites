@@ -1,10 +1,11 @@
-import { message } from "../node_modules/gulp-typescript/release/utils";
 import { Streamer } from "./Streamer";
 import { UiElement } from "./UiElement";
 
 declare var chrome: any;
 
 export class FavouriteButton extends UiElement {
+
+	ChannelName : string = null;
 
 	Port : any = null;
 	Popup : HTMLElement = null;
@@ -26,7 +27,7 @@ export class FavouriteButton extends UiElement {
 		return button;
 	}
 
-	GetStreamer() : Promise<any> // Streamer
+	GetStreamer() : Promise<any>
 	{
 		let button = this;
 		return new Promise(function(resolve,reject){
@@ -34,10 +35,7 @@ export class FavouriteButton extends UiElement {
 			if(button.ChannelStreamer == null)
 			{
 				let steamer = new Streamer();
-				let pagename : string = (<HTMLElement>document.querySelector(".metadata-layout__support").childNodes[0].childNodes[0])
-										.getAttribute('href').replace(/\//g,'');
-
-				steamer.SetUserByName(pagename)
+				steamer.SetUserByName(button.ChannelName)
 				.then(()=>{
 					button.ChannelStreamer = steamer;
 					resolve(steamer);
@@ -58,6 +56,16 @@ export class FavouriteButton extends UiElement {
 		let button = this;
 		this.GetStreamer()
 		.then((streamer : Streamer) =>{
+
+			let viewcountEle = document.querySelector('[data-a-target="animated-channel-viewers-count"]');
+			if(viewcountEle != null)
+			{
+				let numberel = <HTMLElement>(viewcountEle.childNodes.length == 1 ? viewcountEle : viewcountEle.childNodes[0]);
+				let viewcount : number = parseInt(numberel.innerText.replace(/,/g, ''));
+				let gameplayed : string = (<HTMLElement>document.querySelector('[data-a-target="stream-game-link"]').childNodes[0]).innerText;
+	
+				streamer.Stream = {viewers : viewcount, game : gameplayed };	
+			}
 
 			button.Port.postMessage({Command : (!button.Favourited ? 'Favourited' : 'Unfavourited'),
 									 Streamer : streamer});
@@ -141,15 +149,38 @@ export class FavouriteButton extends UiElement {
 		this.MouseOver = false;
 	}
 
+	ExternalUpdate(favourited : boolean)
+	{
+		this.Favourited = favourited;
+
+		let iconHtml : string;
+		if(this.Favourited) {
+			iconHtml = `[FavouriteButtonSvgFilled.html]`;
+		}
+		else {
+			iconHtml = `[FavouriteButtonSvg.html]`;
+		}
+
+		let iconSlot = this.DomElement.querySelector('figure');
+		let icon : HTMLElement = this.htmlToElement(iconHtml);
+		iconSlot.innerHTML = "";
+		iconSlot.append(icon);
+	}
+
     constructor(port : any)
     {
 		super();
 
 		this.Port = port;
 
+		this.ChannelName  = (<HTMLElement>document.querySelector('.channel-info-content')
+							.querySelector('a'))
+							.getAttribute('href')
+							.replace(/\//g,'');
+
   		this.DomElement = this.BuildButton();      
     	let buttonContainer = document.querySelector('.follow-btn__follow-notify-container');
-      	let addto = buttonContainer.childNodes[0];//.childNodes[0];
+      	let addto = buttonContainer.childNodes[0];
 		addto.insertBefore(this.DomElement,addto.childNodes[1]);
 		  
 		this.DomElement.onclick = () =>{this.Click()};

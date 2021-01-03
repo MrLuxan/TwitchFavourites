@@ -1,29 +1,36 @@
 declare var chrome : any;
 
+import { Streamer } from "./Streamer";
 import { FavouriteButton } from "./FavouriteButton";
 import { FavouriteList } from "./FavouriteList";
 
 let FavList : FavouriteList = null;
+let FavButton : FavouriteButton = null;
 
 let port = chrome.runtime.connect({name: "TwitchFavourites"});
 port.onMessage.addListener(function(msg : any) {
   if(msg.StreamerList != null)
   {
-	if(FavList == null)
-	{
-		FavList = new FavouriteList(msg.StreamerList);
+	let list : Array<Streamer> = msg.StreamerList;
+
+	if(FavList == null) {
+		FavList = new FavouriteList(list);
 	}
-	else
-	{
-		FavList.UpdateList(msg.StreamerList)
+	else {
+		FavList.UpdateList(list)
+	}
+
+	if(FavButton != null){
+		let favourited = list.find(s => s.User.name == FavButton.ChannelName) != undefined;
+		if(FavButton.Favourited != favourited)
+		{
+			FavButton.ExternalUpdate(favourited);	
+		}
 	}
   }
 });
 port.postMessage({Command : 'Register'});
 
-
-
-let favouriteButton : FavouriteButton = null;
 
 let observerConfig = {
 	attributes: true, 
@@ -35,14 +42,13 @@ let observerConfig = {
 
 function callbackAttributeChange(mutations : any, mutationObs : any) {
 
-
 	let buttonContainer = document.querySelector('.follow-btn__notification-toggle-container');
 
-	if(buttonContainer != null && favouriteButton == null) 
+	if(buttonContainer != null && FavButton == null) 
 	{
 		console.log('loaded');
-		favouriteButton = new FavouriteButton(port);
-		console.log(favouriteButton.DomElement);
+		FavButton = new FavouriteButton(port);
+		console.log(FavButton.DomElement);
 	}
 }
 
