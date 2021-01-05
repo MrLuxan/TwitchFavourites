@@ -1,3 +1,4 @@
+import { PostMessage, PostMessageCommand } from "./InterfacePostMessage";
 import { Streamer } from "./Streamer";
 import { UiElement } from "./UiElement";
 
@@ -66,9 +67,9 @@ export class FavouriteButton extends UiElement {
 	
 				streamer.Stream = {viewers : viewcount, game : gameplayed };	
 			}
-
-			button.Port.postMessage({Command : (!button.Favourited ? 'Favourited' : 'Unfavourited'),
-									 Streamer : streamer});
+			button.Port.postMessage(<PostMessage> {Command : (!button.Favourited ? PostMessageCommand.Favourited :
+																				   PostMessageCommand.Unfavourited),
+									 			   Streamer : streamer});
 	
 			this.Favourited = !this.Favourited;
 			if(this.Popup != null)
@@ -122,7 +123,6 @@ export class FavouriteButton extends UiElement {
 			iconSlot.innerHTML = "";
 			iconSlot.append(icon);
 		}
-
 	}
 
 	MouseLeave(event : any)

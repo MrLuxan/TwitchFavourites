@@ -1,13 +1,11 @@
-import { message } from "../node_modules/gulp-typescript/release/utils";
+import { PostMessage, PostMessageCommand } from "./InterfacePostMessage";
 import { StreamerHub } from "./StreamerHub";
-
 export { };
 
 declare var chrome : any;
 
 let hub : StreamerHub;
 let Ports : any[] = [];
-
 
 chrome.runtime.onInstalled.addListener(() => {
   console.log('onInstalled...');
@@ -40,28 +38,30 @@ function IssueListUp(){
   let time = TimeStamp();
   console.log(time);
   Ports.forEach(port => {
-    port.postMessage({Command: "Update", Time : time, StreamerList : hub.GetList()});
+    port.postMessage(<PostMessage> {Command: PostMessageCommand.Update,
+                                    FullList : hub.Streamers,
+                                    DisplayList : hub.GetList(),                  
+                                    Time : time});
   });
 }
 
 
 chrome.runtime.onConnect.addListener((port : any) => {
-  port.onMessage.addListener(function(msg : any) {
+  port.onMessage.addListener(function(msg : PostMessage) {
 
     console.log(msg);
 
     switch(msg.Command)
     {
-      case 'Register':
-        console.log('New port',port);
+      case PostMessageCommand.Register:
         Ports.push(port);
         port.onDisconnect.addListener((p : any) =>{ Ports = Ports.filter(a => a != p); });
-        port.postMessage({Command : 'Setup' , StreamerList : hub.GetList()});
+        port.postMessage(<PostMessage> {Command: PostMessageCommand.Setup,
+                                        FullList : hub.Streamers,
+                                        DisplayList : hub.GetList()});
         break;
 
-      case 'Favourited':
-        console.log('Favourited',msg.Streamer);
-
+      case PostMessageCommand.Favourited:
         hub.AddStreamer(msg.Streamer)
         .then((data) => {
           console.log(data)
@@ -70,12 +70,9 @@ chrome.runtime.onConnect.addListener((port : any) => {
         .catch((error) =>{
           console.log(error);
         });
-
         break;
       
-      case 'Unfavourited':
-        console.log('Unfavourited',msg.Streamer);
-        
+      case PostMessageCommand.Unfavourited: 
         hub.RemoveStreamer(msg.Streamer)
         .then((data) => {
           console.log(data)
@@ -84,7 +81,6 @@ chrome.runtime.onConnect.addListener((port : any) => {
         .catch((error) =>{
           console.log(error);
         });
-
         break;
 
       default:

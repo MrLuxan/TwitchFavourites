@@ -3,31 +3,36 @@ declare var chrome : any;
 import { Streamer } from "./Streamer";
 import { FavouriteButton } from "./FavouriteButton";
 import { FavouriteList } from "./FavouriteList";
+import { PostMessage, PostMessageCommand } from "./InterfacePostMessage";
 
 let FavList : FavouriteList = null;
 let FavButton : FavouriteButton = null;
 
 let port = chrome.runtime.connect({name: "TwitchFavourites"});
-port.onMessage.addListener(function(msg : any) {
-  if(msg.StreamerList != null)
-  {
-	let list : Array<Streamer> = msg.StreamerList;
+port.onMessage.addListener(function(msg : PostMessage) {
+  
+	switch(msg.Command)
+	{
+		case PostMessageCommand.Setup:
+			FavList = new FavouriteList(msg.DisplayList);
+			break;
+			
+		case PostMessageCommand.Update:
+			FavList.UpdateList(msg.DisplayList);
 
-	if(FavList == null) {
-		FavList = new FavouriteList(list);
-	}
-	else {
-		FavList.UpdateList(list)
-	}
+			if(FavButton != null){
+				let favourited = msg.FullList.find(s => s.User.name == FavButton.ChannelName) != undefined;
+				if(FavButton.Favourited != favourited)
+				{
+					FavButton.ExternalUpdate(favourited);	
+				}
+			}
+			break;
 
-	if(FavButton != null){
-		let favourited = list.find(s => s.User.name == FavButton.ChannelName) != undefined;
-		if(FavButton.Favourited != favourited)
-		{
-			FavButton.ExternalUpdate(favourited);	
-		}
-	}
-  }
+		default:
+			console.log("Unknown command");
+			break;
+	}	
 });
 port.postMessage({Command : 'Register'});
 
