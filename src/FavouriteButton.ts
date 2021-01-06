@@ -1,3 +1,4 @@
+import { ContentControler } from "./ContentScript";
 import { PostMessage, PostMessageCommand } from "./InterfacePostMessage";
 import { Streamer } from "./Streamer";
 import { UiElement } from "./UiElement";
@@ -6,13 +7,13 @@ declare var chrome: any;
 
 export class FavouriteButton extends UiElement {
 
-	ChannelName : string = null;
+	ParentControl : ContentControler = null;
 
-	Port : any = null;
-	Popup : HTMLElement = null;
-	Favourited : boolean = false;
+	ChannelName : string = null;
 	ChannelStreamer : Streamer = null;
 
+	Favourited : boolean = false;
+	Tooltip : HTMLElement = null;
 	MouseOver : boolean = false;
 
 	BuildButton() : HTMLElement
@@ -67,14 +68,13 @@ export class FavouriteButton extends UiElement {
 	
 				streamer.Stream = {viewers : viewcount, game : gameplayed };	
 			}
-			button.Port.postMessage(<PostMessage> {Command : (!button.Favourited ? PostMessageCommand.Favourited :
-																				   PostMessageCommand.Unfavourited),
-									 			   Streamer : streamer});
+			button.ParentControl.Port.postMessage(<PostMessage> {Command : (!button.Favourited ? PostMessageCommand.Favourited : PostMessageCommand.Unfavourited),
+									 			   				 Streamer : streamer});
 	
 			this.Favourited = !this.Favourited;
-			if(this.Popup != null)
+			if(this.Tooltip != null)
 			{
-				let tooltip = this.Popup.querySelector('.tw-tooltip');
+				let tooltip = this.Tooltip.querySelector('.tw-tooltip');
 				tooltip.innerHTML = (!this.Favourited ? 'Favourite' : 'Unfavourite');
 			}
 	
@@ -105,10 +105,10 @@ export class FavouriteButton extends UiElement {
 		let y = rect.top;
 		let message = (!this.Favourited ? 'Favourite' : 'Unfavourite');
 		let popupHtml = `[FavouriteButtonPopup.html]`;
-		this.Popup = this.htmlToElement(popupHtml);
+		this.Tooltip = this.htmlToElement(popupHtml);
 		let root = document.querySelector('#root');
 		let addto = root.childNodes[0];
-		addto.appendChild(this.Popup);
+		addto.appendChild(this.Tooltip);
 		
 		let animate : HTMLElement = this.DomElement.querySelector(".tw-mg-r-0");
 		animate.style.cssText = 'transform: translateX(0px) scale(1.2); transition: transform 300ms ease 0s';
@@ -130,10 +130,10 @@ export class FavouriteButton extends UiElement {
 		let animate : HTMLElement = this.DomElement.querySelector(".tw-mg-r-0");
 		animate.style.cssText = 'transform: translateX(0px) scale(1); transition: transform 300ms ease 0s;';
 		
-		if(this.Popup != null)
+		if(this.Tooltip != null)
 		{
-			this.Popup.remove();
-			this.Popup = null;
+			this.Tooltip.remove();
+			this.Tooltip = null;
 		}	
 
 		let iconSlot = this.DomElement.querySelector('figure');
@@ -167,12 +167,11 @@ export class FavouriteButton extends UiElement {
 		iconSlot.append(icon);
 	}
 
-    constructor(port : any)
+    constructor(control : ContentControler)
     {
 		super();
 
-		this.Port = port;
-
+		this.ParentControl = control;
 		this.ChannelName  = (<HTMLElement>document.querySelector('.channel-info-content')
 							.querySelector('a'))
 							.getAttribute('href')
