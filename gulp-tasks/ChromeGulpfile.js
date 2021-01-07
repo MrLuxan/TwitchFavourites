@@ -46,8 +46,8 @@ gulp.task("ChromeManifest", function () {
 
 
 var CopyInHtmlTasks = [];
-var insertFiles = {FavouriteList : ['FavouriteList','FavouriteButtonSvgFilled'],
-                   FavouriteItem : ['FavouriteItem'],
+var insertFiles = {FavouriteList : ['FavouriteList','FavouriteButtonSvgFilled','SideBarIconTooltip'],
+                   FavouriteItem : ['FavouriteItem','SideBarOnlineTooltip','SideBarOfflineTooltip'],
                    FavouriteButton : ['FavouriteButton','FavouriteButtonPopup','FavouriteButtonSvg','FavouriteButtonSvgFilled']};
 for (const file in insertFiles) {
   insertFiles[file].forEach(htmlswap =>{

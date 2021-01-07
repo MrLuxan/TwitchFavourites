@@ -10,6 +10,8 @@ export class FavouriteList extends UiElement {
 	FavouriteList : HTMLElement = null; 
 	FavouriteItems : FavouriteItem[] = [];
 
+	SideBarTooltip : HTMLElement = null;
+
 	BuildList(streamerList : Streamer[])
 	{
 		let listhtml : string = `[FavouriteList.html]`;
@@ -17,6 +19,40 @@ export class FavouriteList extends UiElement {
 
 		this.UpdateList(streamerList)
 	}
+
+	TitleIconMouseEnter(event : any)
+	{
+		let icon = this.DomElement.querySelector('figure');
+		var rect = icon.getBoundingClientRect();		
+		let ypos : number = rect.top;
+
+		let tooltipHtml = `[SideBarIconTooltip.html]`;
+		this.SideBarTooltip = this.htmlToElement(tooltipHtml);
+		document.body.append(this.SideBarTooltip);
+	};
+
+	TitleIconMouseLeave(event : any)
+	{
+		this.SideBarTooltip.remove();
+	};
+
+	StreamerMouseEnter(event : any)
+	{
+		let DisplayName : string = '' ;
+		let Game : string = '' ;
+		let Bio : string = '' ;
+		let ViewCount : string = '' ;
+
+		let tooltipHtml = `[SideBarOnlineTooltip.html]`;
+		this.SideBarTooltip = this.htmlToElement(tooltipHtml);
+		document.body.append(this.SideBarTooltip);
+	}
+
+	StreamerMouseLeave(event : any)
+	{
+		this.SideBarTooltip.remove();
+	}
+
 
 	UpdateList(streamerList : Streamer[])
 	{
@@ -48,7 +84,9 @@ export class FavouriteList extends UiElement {
 			let icon = <HTMLElement>this.DomElement.querySelector('#FavouriteChannelsIcon');
 			icon.style.display = (isWide ? 'none' : 'block');
 		}
-	}	
+	}
+	
+	
 
     constructor(streamerList : Streamer[])
     {
@@ -59,6 +97,10 @@ export class FavouriteList extends UiElement {
 		let insetInto = sidebar.childNodes[0];
 		insetInto.insertBefore(this.DomElement, insetInto.childNodes[0]);
 
+		let icon = this.DomElement.querySelector('figure');
+		icon.onmouseenter = (event) =>{this.TitleIconMouseEnter(event)};
+		icon.onmouseleave = (event) =>{this.TitleIconMouseLeave(event)};
+		
 		const ro = new ResizeObserver(() => {this.ChangeSize()});
 		ro.observe(this.DomElement);
 	}
