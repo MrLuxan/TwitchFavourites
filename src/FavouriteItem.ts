@@ -52,14 +52,9 @@ export class FavouriteItem extends UiElement {
 			else
 			{
 				let channelName : string = this.Streamer.User.name;
-
-				console.log('offline');
 				let tooltipHtml = `[SideBarOfflineTooltip.html]`;
 				this.Tooltip = this.htmlToElement(tooltipHtml);
 				document.body.append(this.Tooltip);
-
-				console.log(tooltipHtml);
-				console.log(this.Tooltip);
 			}
 		}
 	}
@@ -78,7 +73,8 @@ export class FavouriteItem extends UiElement {
 
 	GetListElement() : HTMLElement
 	{
-		let name = this.Streamer.User.display_name;
+		let displayName = this.Streamer.User.display_name;
+		let channelName = this.Streamer.User.name;
 		let logo = this.Streamer.User.logo;
 		let game = this.Game;
 		let viewers = this.ViewCount;

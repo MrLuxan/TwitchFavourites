@@ -25,10 +25,15 @@ export class ContentControler{
 		switch(msg.Command)
 		{
 			case PostMessageCommand.Setup:
+				this.FullList = msg.FullList;
+				this.DisplayList = msg.DisplayList;
 				this.FavList = new FavouriteList(msg.DisplayList);
 				break;
 				
 			case PostMessageCommand.Update:
+				this.FullList = msg.FullList;
+				this.DisplayList = msg.DisplayList;
+
 				this.FavList.UpdateList(msg.DisplayList);
 	
 				if(this.FavButton != null){

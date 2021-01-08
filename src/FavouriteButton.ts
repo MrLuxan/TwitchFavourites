@@ -95,7 +95,7 @@ export class FavouriteButton extends UiElement {
 
 	MouseEnter(event : any)
 	{		
-		if(this.MouseOver) // Stop multiple triggers on when changing icon on unfavourting
+		if(this.MouseOver) // Stop multiple triggers when changing icon on unfavourting
 			return;
 
 		this.MouseOver = true;
@@ -175,9 +175,17 @@ export class FavouriteButton extends UiElement {
 		this.ChannelName  = (<HTMLElement>document.querySelector('.channel-info-content')
 							.querySelector('a'))
 							.getAttribute('href')
-							.replace(/\//g,'');
+							.replace(/\//g,'')
+							.toLowerCase();
 
-  		this.DomElement = this.BuildButton();      
+		let streamer = control.FullList.find(s => s.User.name == this.ChannelName);
+		if(streamer != undefined)
+		{
+			this.ChannelStreamer = streamer;
+			this.Favourited = true;
+		}
+
+		this.DomElement = this.BuildButton();      
     	let buttonContainer = document.querySelector('.follow-btn__follow-notify-container');
       	let addto = buttonContainer.childNodes[0];
 		addto.insertBefore(this.DomElement,addto.childNodes[1]);
