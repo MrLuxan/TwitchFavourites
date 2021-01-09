@@ -1,3 +1,5 @@
 export interface GadgetSettings{
-    ShowOffileChannels : boolean
+    ShowOffileChannels : boolean,
+    ShowNotifcantoin : boolean,
+    ShowLiveChannelsInSettingsPopup : boolean
 }

@@ -33,43 +33,6 @@ export class StreamerHub
 
 
 
-    loadXHR(url : any) {
-
-      return new Promise(function(resolve, reject) {
-          try {
-              var xhr = new XMLHttpRequest();
-              xhr.open("GET", url);
-              xhr.responseType = "blob";
-              xhr.onerror = function() {reject("Network error.")};
-              xhr.onload = function() {
-                  if (xhr.status === 200) {resolve(xhr.response)}
-                  else {reject("Loading error:" + xhr.statusText)}
-              };
-              xhr.send();
-          }
-          catch(err) {reject(err.message)}
-      });
-  }
-
-
-
-    Notify(streamer : Streamer) 
-    {
-      this.loadXHR(streamer.User.logo).then(function(blob) {        
-        var options = {
-            title: `Watch ${streamer.User.display_name} on Twitch`,
-            message: `${streamer.User.display_name} has just gone live`,
-            type: "basic",
-            iconUrl: URL.createObjectURL(blob)
-        };
-
-        chrome.notifications.onClicked.addListener(function(notificationId : string) {  
-          chrome.tabs.create({url: `https://www.twitch.tv/${notificationId}`});
-        });  
-
-        return chrome.notifications.create(streamer.User.name, options /*, callback */);
-      });
-    }
   
   
 
@@ -124,7 +87,7 @@ export class StreamerHub
       });
     }
 
-    Refresh(callBack : any) : Promise<any>
+    Refresh() : Promise<any>
     {      
       let hub = this;
       return new Promise(function (resolve,reject){
