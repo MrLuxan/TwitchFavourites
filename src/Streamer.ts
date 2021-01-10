@@ -1,3 +1,4 @@
+import { promises } from "fs";
 import { ChannelData,Stream,Channel,Preview } from "./InterfaceStream";
 import { User,UserData} from "./InterfaceUser";
 
@@ -29,7 +30,7 @@ export class Streamer {
         });
     }
 	
-	SetStreamByID(id : string) : any
+	SetStreamByID(id : string) : Promise<any>
     {
 		let s = this;
         return new Promise(function(resolve,reject){
@@ -97,9 +98,19 @@ export class Streamer {
         });
     }	
 
-	Refresh()
+	Refresh() : Promise<any>
 	{
-		return this.SetStreamByID(this.User._id);
+        let s = this;
+        let offline = this.Stream == null;
+
+        return new Promise(function(resolve,reject){
+            s.SetStreamByID(s.User._id).then((streamer) =>{
+                let flagChange = offline && streamer != null;
+                resolve([s,flagChange]);
+            }).catch((error) => {
+                reject(error);
+            });
+        });
 	}
 
 	Set(id : string)

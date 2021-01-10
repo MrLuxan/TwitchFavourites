@@ -1,10 +1,12 @@
 import { PostMessage, PostMessageCommand } from "./InterfacePostMessage";
+import { Streamer } from "./Streamer";
 import { StreamerHub } from "./StreamerHub";
 export { };
 
 declare var chrome : any;
-let RefreshEnabled = false;
 
+let RefreshEnabled = true;
+let SettingNotify = true;
 
 let hub : StreamerHub;
 let Ports : any[] = [];
@@ -32,17 +34,38 @@ function TimeStamp()
 }
 
 chrome.alarms.onAlarm.addListener((alarm : any) => {
+
+  console.log('Update');
   if(RefreshEnabled){
     hub.Refresh()
-    .then(() =>{
+    .then((res : Array<any>) =>{
+
+      console.log(res);
       IssueListUp();
-      })
+
+      if(SettingNotify)
+      {
+        res.forEach(element => {
+          
+          let streamer : Streamer = element[0];
+          let newlyOnline = Boolean = element[1];
+
+          if(newlyOnline)
+          {
+            Notify(streamer); 
+          }
+        });
+      }      
+    })
+    .catch((error) =>
+    {
+      console.error('error',error);
+    });
   }
   else
   {
     IssueListUp();
   }
-  //console.log(alarm.name); // refresh  
 });
 
 function IssueListUp(){
@@ -106,40 +129,51 @@ chrome.runtime.onConnect.addListener((port : any) => {
 });
 
 
-// loadXHR(url : any) {
+// chrome.tabs.onUpdated.addListener(function(tabId : any, info  : any, tab  : any) {
 
-//   return new Promise(function(resolve, reject) {
-//       try {
-//           var xhr = new XMLHttpRequest();
-//           xhr.open("GET", url);
-//           xhr.responseType = "blob";
-//           xhr.onerror = function() {reject("Network error.")};
-//           xhr.onload = function() {
-//               if (xhr.status === 200) {resolve(xhr.response)}
-//               else {reject("Loading error:" + xhr.statusText)}
-//           };
-//           xhr.send();
-//       }
-//       catch(err) {reject(err.message)}
-//   });
-// }
+//   console.log(tabId,info,tab);
+
+//   // if (info.url) {
+//   //     chrome.tabs.sendMessage(tabId, {
+//   //         message: 'urlChanged'
+//   //     })
+//   // }
+// });
+
+function loadXHR(url : any) {
+
+  return new Promise(function(resolve, reject) {
+      try {
+          var xhr = new XMLHttpRequest();
+          xhr.open("GET", url);
+          xhr.responseType = "blob";
+          xhr.onerror = function() {reject("Network error.")};
+          xhr.onload = function() {
+              if (xhr.status === 200) {resolve(xhr.response)}
+              else {reject("Loading error:" + xhr.statusText)}
+          };
+          xhr.send();
+      }
+      catch(err) {reject(err.message)}
+  });
+}
 
 
 
-// Notify(streamer : Streamer) 
-// {
-//   this.loadXHR(streamer.User.logo).then(function(blob) {        
-//     var options = {
-//         title: `Watch ${streamer.User.display_name} on Twitch`,
-//         message: `${streamer.User.display_name} has just gone live`,
-//         type: "basic",
-//         iconUrl: URL.createObjectURL(blob)
-//     };
+function Notify(streamer : Streamer) 
+{
+  this.loadXHR(streamer.User.logo).then(function(blob : Blob) {        
+    var options = {
+        title: `Watch ${streamer.User.display_name} on Twitch`,
+        message: `${streamer.User.display_name} has just gone live`,
+        type: "basic",
+        iconUrl: URL.createObjectURL(blob)
+    };
 
-//     chrome.notifications.onClicked.addListener(function(notificationId : string) {  
-//       chrome.tabs.create({url: `https://www.twitch.tv/${notificationId}`});
-//     });  
+    chrome.notifications.onClicked.addListener(function(notificationId : string) {  
+      chrome.tabs.create({url: `https://www.twitch.tv/${notificationId}`});
+    });  
 
-//     return chrome.notifications.create(streamer.User.name, options /*, callback */);
-//   });
-// }
+    return chrome.notifications.create(streamer.User.name, options /*, callback */);
+  });
+}

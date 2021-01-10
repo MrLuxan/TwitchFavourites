@@ -31,12 +31,6 @@ export class StreamerHub
       .catch((error) => console.log('loaderror',error));
     }
 
-
-
-  
-  
-
-
     SaveStreamers() : Promise<any>
     {
       let hub = this;
@@ -98,7 +92,7 @@ export class StreamerHub
 
         Promise.all(promises)
         .then((res) =>{
-          resolve(hub.GetList());
+          resolve(res);
         })
         .catch((error) =>{
           reject(error);
