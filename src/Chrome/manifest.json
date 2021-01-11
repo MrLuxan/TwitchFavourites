@@ -2,7 +2,7 @@
   "name": "Twitch Favourites",
   "version": "---",
   "description": "Flag your favourite streams to make it easyier to find thire channels",
-  "permissions": ["storage","alarms","tabs"],
+  "permissions": ["storage","alarms","tabs","notifications"],
   "icons": { "16": "images/Icon16.png",
              "48": "images/Icon48.png",
           	 "128":"images/Icon128.png" },

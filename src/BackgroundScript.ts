@@ -40,46 +40,35 @@ chrome.alarms.onAlarm.addListener((alarm : any) => {
     hub.Refresh()
     .then((res : Array<any>) =>{
 
-      console.log(res);
-      IssueListUp();
+      IssueListUpdate();
 
       if(SettingNotify)
       {
         res.forEach(element => {
-          
           let streamer : Streamer = element[0];
           let newlyOnline = Boolean = element[1];
 
-          if(newlyOnline)
-          {
+          if(newlyOnline){
             Notify(streamer); 
           }
         });
-      }      
+      }
     })
     .catch((error) =>
     {
       console.error('error',error);
     });
   }
-  else
-  {
-    IssueListUp();
-  }
 });
 
-function IssueListUp(){
+function IssueListUpdate(){
   let time = TimeStamp();
-
-
-
-
   console.log(time);
+
   Ports.forEach(port => {
     port.postMessage(<PostMessage> {Command: PostMessageCommand.Update,
                                     FullList : hub.Streamers,
-                                    DisplayList : hub.GetList(),                  
-                                    Time : time});
+                                    DisplayList : hub.GetList()});
   });
 }
 
@@ -103,7 +92,7 @@ chrome.runtime.onConnect.addListener((port : any) => {
         hub.AddStreamer(msg.Streamer)
         .then((data) => {
           console.log(data)
-          IssueListUp();
+          IssueListUpdate();
         })
         .catch((error) =>{
           console.log(error);
@@ -114,7 +103,7 @@ chrome.runtime.onConnect.addListener((port : any) => {
         hub.RemoveStreamer(msg.Streamer)
         .then((data) => {
           console.log(data)
-          IssueListUp();
+          IssueListUpdate();
         })
         .catch((error) =>{
           console.log(error);
@@ -162,7 +151,9 @@ function loadXHR(url : any) {
 
 function Notify(streamer : Streamer) 
 {
-  this.loadXHR(streamer.User.logo).then(function(blob : Blob) {        
+  console.log('Do a notify');
+
+  loadXHR(streamer.User.logo).then(function(blob : Blob) {        
     var options = {
         title: `Watch ${streamer.User.display_name} on Twitch`,
         message: `${streamer.User.display_name} has just gone live`,
@@ -175,5 +166,6 @@ function Notify(streamer : Streamer)
     });  
 
     return chrome.notifications.create(streamer.User.name, options /*, callback */);
-  });
+  })
+  .catch((error) => {console.log(error);})
 }
