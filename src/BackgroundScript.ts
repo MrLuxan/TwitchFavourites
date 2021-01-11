@@ -151,7 +151,7 @@ function loadXHR(url : any) {
 
 function Notify(streamer : Streamer) 
 {
-  console.log('Do a notify');
+  console.log('Do a notify' , streamer);
 
   loadXHR(streamer.User.logo).then(function(blob : Blob) {        
     var options = {
