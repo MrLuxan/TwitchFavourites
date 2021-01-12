@@ -48,6 +48,8 @@ chrome.alarms.onAlarm.addListener((alarm : any) => {
           let streamer : Streamer = element[0];
           let newlyOnline = Boolean = element[1];
 
+          console.log(streamer,newlyOnline);
+
           if(newlyOnline){
             Notify(streamer); 
           }
@@ -118,17 +120,6 @@ chrome.runtime.onConnect.addListener((port : any) => {
 });
 
 
-// chrome.tabs.onUpdated.addListener(function(tabId : any, info  : any, tab  : any) {
-
-//   console.log(tabId,info,tab);
-
-//   // if (info.url) {
-//   //     chrome.tabs.sendMessage(tabId, {
-//   //         message: 'urlChanged'
-//   //     })
-//   // }
-// });
-
 function loadXHR(url : any) {
 
   return new Promise(function(resolve, reject) {
@@ -147,12 +138,8 @@ function loadXHR(url : any) {
   });
 }
 
-
-
 function Notify(streamer : Streamer) 
 {
-  console.log('Do a notify' , streamer);
-
   loadXHR(streamer.User.logo).then(function(blob : Blob) {        
     var options = {
         title: `Watch ${streamer.User.display_name} on Twitch`,
@@ -161,11 +148,24 @@ function Notify(streamer : Streamer)
         iconUrl: URL.createObjectURL(blob)
     };
 
-    chrome.notifications.onClicked.addListener(function(notificationId : string) {  
-      chrome.tabs.create({url: `https://www.twitch.tv/${notificationId}`});
-    });  
-
     return chrome.notifications.create(streamer.User.name, options /*, callback */);
   })
   .catch((error) => {console.log(error);})
 }
+
+chrome.notifications.onClicked.addListener(function(notificationId : string) {  
+  chrome.tabs.create({url: `https://www.twitch.tv/${notificationId}`});
+}); 
+
+
+
+// chrome.tabs.onUpdated.addListener(function(tabId : any, info  : any, tab  : any) {
+
+//   console.log(tabId,info,tab);
+
+//   // if (info.url) {
+//   //     chrome.tabs.sendMessage(tabId, {
+//   //         message: 'urlChanged'
+//   //     })
+//   // }
+// });
