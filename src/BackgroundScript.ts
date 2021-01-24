@@ -1,3 +1,4 @@
+import { on } from "process";
 import { PostMessage, PostMessageCommand } from "./InterfacePostMessage";
 import { Streamer } from "./Streamer";
 import { StreamerHub } from "./StreamerHub";
@@ -7,6 +8,7 @@ declare var chrome : any;
 
 let RefreshEnabled = true;
 let SettingNotify = true;
+let SettingsShowNumber = true;
 
 let hub : StreamerHub;
 let Ports : any[] = [];
@@ -55,6 +57,14 @@ chrome.alarms.onAlarm.addListener((alarm : any) => {
           }
         });
       }
+
+      if(SettingsShowNumber)
+      {        
+        let online : number = hub.GetOnlineChannels().length;
+        chrome.browserAction.setBadgeText({text: (online > 0 ? online.toString() : '')});
+      }
+
+
     })
     .catch((error) =>
     {

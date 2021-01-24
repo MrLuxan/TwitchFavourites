@@ -16,6 +16,10 @@
     "scripts": ["backgroundscript.js"],
     "persistent": true
   },
+  "browser_action": {
+    "default_title": "Twitch Favourites",
+    "default_popup": "popup.html"
+  },
   "web_accessible_resources": ["images/*.svg"],
   "manifest_version": 2
 }

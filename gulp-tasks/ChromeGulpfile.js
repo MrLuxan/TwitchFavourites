@@ -68,6 +68,7 @@ gulp.task('ChromeBuildJs', gulp.series(
   function () { return gulp.src('./src/*.ts').pipe(gulp.dest('./Build/'))},
   function () { return gulp.src('./src/Chrome/*.ts').pipe(gulp.dest('./Build/'))},
   'ChromeInsertNoteHtml',
+  function () { return gulp.src('./src/html/popup.*').pipe(gulp.dest(GulpVars.ChromeDist))},
   function () { return browserify({
                   basedir: '.',
                   debug: true,
@@ -97,8 +98,24 @@ gulp.task('ChromeBuildJs', gulp.series(
               .pipe(sourcemaps.init({loadMaps: true}))
               //.pipe(uglify()) // not allowed to uglify chrome extension
               .pipe(sourcemaps.write('./'))
-              .pipe(gulp.dest(GulpVars.ChromeDist))}
+              .pipe(gulp.dest(GulpVars.ChromeDist))},
+  function () { return browserify({
+                  basedir: '.',
+                  debug: true,
+                  entries: ["./Build/Popup.ts"],
+                  cache: {},
+                  packageCache: {}
+              })
+              .plugin(tsify)
+              .bundle()
+              .pipe(source('popup.js'))
+              .pipe(buffer())
+              .pipe(sourcemaps.init({loadMaps: true}))
+              //.pipe(uglify()) // not allowed to uglify chrome extension
+              .pipe(sourcemaps.write('./'))
+              .pipe(gulp.dest(GulpVars.ChromeDist))}              
 ));
+
 
 gulp.task('ChromeBuild', 
   gulp.parallel('ChromeIconResize','ChromeCopyImages','ChromeManifest','ChromeBuildJs')

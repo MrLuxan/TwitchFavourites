@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<title></title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="popup.js"></script>
+<link href='http://fonts.googleapis.com/css?family=Roboto:400,700,300' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="popup.css">
+<body>
+
+<div class="tabBar">
+  <button class="tabButton" data-tabid="Favourites">Live favourites</button>
+  <button class="tabButton" data-tabid="Settings">Settings</button>
+
+  <svg id="FavouriteButtonIcon" type="color-fill-current" width="20px" height="20px" version="1.1" viewBox="0 0 20 20" x="0px" y="0px" class="ScSvg-sc-1j5mt50-1 jLaQtw">
+    <g>                                        
+        <mask id="FavouriteButtonMask">
+            <rect x="0" y="0" width="100" height="100" fill="white" />   
+            <path id="FavouriteButtonMaskStar" d="M 16.878 4.1275 L 16.15 2.5625 l -0.728 1.565 l -1.745 0.2425 l 1.276 1.258 l -0.308 1.7425 L 16.15 6.532 l 1.505 0.8385 l -0.308 -1.7425 l 1.2765 -1.258 l -1.7455 -0.2425 z M 14.745 3.212 l -2.1 0.2915 c -0.466 0.065 -0.659 0.6045 -0.332 0.9265 l 1.564 1.5415 l -0.3775 2.136 c -0.0815 0.46 0.438 0.8015 0.861 0.566 L 16.15 7.677 l 1.7895 0.9965 c 0.423 0.235 0.9425 -0.106 0.861 -0.566 l -0.3775 -2.136 l 1.564 -1.5415 c 0.327 -0.322 0.134 -0.8615 -0.332 -0.9265 l -2.1 -0.2915 l -0.877 -1.885 c -0.203 -0.436 -0.853 -0.436 -1.056 0 L 14.745 3.212 z" stroke="black" stroke-width="2" fill="black"></path>
+        </mask>                                                      
+        <path id="FavouriteButtonStar" fill-rule="nonzero" d="M 16.878 4.1275 L 16.15 2.5625 l -0.728 1.565 l -1.745 0.2425 l 1.276 1.258 l -0.308 1.7425 L 16.15 6.532 l 1.505 0.8385 l -0.308 -1.7425 l 1.2765 -1.258 l -1.7455 -0.2425 z M 14.745 3.212 l -2.1 0.2915 c -0.466 0.065 -0.659 0.6045 -0.332 0.9265 l 1.564 1.5415 l -0.3775 2.136 c -0.0815 0.46 0.438 0.8015 0.861 0.566 L 16.15 7.677 l 1.7895 0.9965 c 0.423 0.235 0.9425 -0.106 0.861 -0.566 l -0.3775 -2.136 l 1.564 -1.5415 c 0.327 -0.322 0.134 -0.8615 -0.332 -0.9265 l -2.1 -0.2915 l -0.877 -1.885 c -0.203 -0.436 -0.853 -0.436 -1.056 0 L 14.745 3.212 z"></path>
+        <path id="FavouriteButtonHeart" fill-rule="evenodd" d="M9.171 4.171A4 4 0 006.343 3H6a4 4 0 00-4 4v.343a4 4 0 001.172 2.829L10 17l6.828-6.828A4 4 0 0018 7.343V7a4 4 0 00-4-4h-.343a4 4 0 00-2.829 1.172L10 5l-.829-.829zm.829 10l5.414-5.414A2 2 0 0016 7.343V7a2 2 0 00-2-2h-.343a2 2 0 00-1.414.586L10 7.828 7.757 5.586A2 2 0 006.343 5H6a2 2 0 00-2 2v.343a2 2 0 00.586 1.414L10 14.172z" clip-rule="evenodd" mask="url(#FavouriteButtonMask)"></path> 
+    </g>
+  </svg>
+
+
+</div>
+
+<div id="Favourites" class="container">
+  <div id="NoOneLive">No live streams</div>
+  <div id="Live"></div>
+</div>
+
+<div id="Settings" class="container" style="display:none">
+
+  <h2>Alert</h2>
+  <ul>
+    <li><div class="FakeCheckbox" data-setting="ShowAlerts"></div>Show alert</li>
+  </ul>
+
+  <h2>Ui</h2>
+  <ul>
+    <li><div class="FakeCheckbox" data-setting="ShowOfflineChannels"></div>Show offline channels on favourite list</li>
+  </ul>
+
+  <h2>Action icon</h2>
+  <ul>
+  
+    <li><input class="NumberInput" type="number" id="quantity" name="quantity" min="1" max="5"><label for="quantity">Number of channels shown on live tab</label></li>
+    <li><div class="FakeCheckbox" data-setting="ShowLiveNumber"></div>Show live number</li>
+    <li><div class="FakeCheckbox" data-setting="DarkModeInPopup"></div>Dark mode in popup</li>
+  </ul>
+
+  
+</div>
+
+</body>
+</html>
