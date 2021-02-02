@@ -1,4 +1,4 @@
-import { ContentControler } from "./ContentScript";
+import { ContentContol } from "./Control_Content";
 import { PostMessage, PostMessageCommand } from "./InterfacePostMessage";
 import { Streamer } from "./Streamer";
 import { UiElement } from "./UiElement";
@@ -7,7 +7,7 @@ declare var chrome: any;
 
 export class FavouriteButton extends UiElement {
 
-	ParentControl : ContentControler = null;
+	ParentControl : ContentContol = null;
 
 	ChannelName : string = null;
 	ChannelStreamer : Streamer = null;
@@ -167,7 +167,7 @@ export class FavouriteButton extends UiElement {
 		iconSlot.append(icon);
 	}
 
-    constructor(control : ContentControler)
+    constructor(control : ContentContol)
     {
 		super();
 

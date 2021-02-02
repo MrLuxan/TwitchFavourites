@@ -4,17 +4,17 @@ import { Streamer } from "./Streamer";
 import { FavouriteButton } from "./FavouriteButton";
 import { FavouriteList } from "./FavouriteList";
 import { PostMessage, PostMessageCommand } from "./InterfacePostMessage";
-import { GadgetSettings } from "./InterfaceGadgetSettings";
+import { Settings } from "./InterfaceSettings";
 
 
-export class ContentControler{
+export class ContentContol{
 
 	FavList : FavouriteList = null;
 	FavButton : FavouriteButton = null;
 	
 	FullList : Streamer[];
 	DisplayList : Streamer[];
-	Settings : GadgetSettings;	
+	Settings : Settings;	
 
 	Port : any;
 
@@ -33,6 +33,8 @@ export class ContentControler{
 			case PostMessageCommand.Update:
 				this.FullList = msg.FullList;
 				this.DisplayList = msg.DisplayList;
+
+				console.log(msg.DisplayList);
 
 				this.FavList.UpdateList(msg.DisplayList);
 	
@@ -82,4 +84,4 @@ export class ContentControler{
 	}
 }
 
-new ContentControler();
+new ContentContol();

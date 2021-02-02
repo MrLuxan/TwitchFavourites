@@ -1,3 +1,4 @@
+import { Settings } from "./InterfaceSettings";
 import { Streamer } from "./Streamer";
 
 export enum PostMessageCommand {
@@ -5,15 +6,18 @@ export enum PostMessageCommand {
     Unfavourited,
     Favourited,
     Update,
-    Setup
+    Setup,
+    SetttingsSave
 }
 
 export interface PostMessage
 {
     Command: PostMessageCommand,
+    Settings? : Settings
     FullList? : Array<Streamer>,
+    OnlineList? : Array<Streamer>,
     DisplayList? : Array<Streamer>,
     Streamer? : Streamer,
-    Port? : any
+    Port? : any,
     Time? : string
 }

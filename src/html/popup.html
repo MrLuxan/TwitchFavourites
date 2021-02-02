@@ -31,26 +31,20 @@
 </div>
 
 <div id="Settings" class="container" style="display:none">
-
-  <h2>Alert</h2>
   <ul>
-    <li><div class="FakeCheckbox" data-setting="ShowAlerts"></div>Show alert</li>
+    <li>Show offline channels on favourite list <div class="FakeCheckbox FakeCheckboxActive" data-setting="ShowOfflineChannels"></div></li>
+    <li>
+      List live channels <br>
+      <div class="SetttingsSubCat">
+        <div class="SetttingsSubItem">Alphabetically<div class="FakeCheckbox FakeRadio FakeCheckboxActive" data-setting="Alphabetically"></div></div>
+        <div class="SetttingsSubItem">View count<div class="FakeCheckbox FakeRadio" data-setting="ByViewCount"></div></div>
+      </div>
+    </li>
+    <li>Show live number on action icon<div class="FakeCheckbox FakeCheckboxActive" data-setting="ShowLiveNumber"></div></li>
+    <li>Dark mode in popup<div class="FakeCheckbox" data-setting="DarkModeInPopup"></div></li>
+    <li>Number of channels shown on live tab<input class="NumberInput" type="number" id="quantity" data-setting="ChannelsHigh" name="quantity" min="1" max="10" value="6"></li>
+    <li>System alert when streamer goes live <div class="FakeCheckbox" data-setting="ShowAlerts"></div></li>
   </ul>
-
-  <h2>Ui</h2>
-  <ul>
-    <li><div class="FakeCheckbox" data-setting="ShowOfflineChannels"></div>Show offline channels on favourite list</li>
-  </ul>
-
-  <h2>Action icon</h2>
-  <ul>
-  
-    <li><input class="NumberInput" type="number" id="quantity" name="quantity" min="1" max="5"><label for="quantity">Number of channels shown on live tab</label></li>
-    <li><div class="FakeCheckbox" data-setting="ShowLiveNumber"></div>Show live number</li>
-    <li><div class="FakeCheckbox" data-setting="DarkModeInPopup"></div>Dark mode in popup</li>
-  </ul>
-
-  
 </div>
 
 </body>

@@ -11,7 +11,7 @@ export module DataStore {
                     if(TwitchFavourites === undefined)
                         TwitchFavourites = {};
 
-                    let data = (TwitchFavourites[key] === undefined ? "" : TwitchFavourites[key]);
+                    let data = (TwitchFavourites[key] === undefined ? null : TwitchFavourites[key]);
                     resolve(data);
                 });
             });

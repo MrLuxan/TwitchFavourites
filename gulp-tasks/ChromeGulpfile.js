@@ -72,7 +72,7 @@ gulp.task('ChromeBuildJs', gulp.series(
   function () { return browserify({
                   basedir: '.',
                   debug: true,
-                  entries: ["./Build/ContentScript.ts"],
+                  entries: ["./Build/Control_Content.ts"],
                   cache: {},
                   packageCache: {}
               })
@@ -87,7 +87,7 @@ gulp.task('ChromeBuildJs', gulp.series(
   function () { return browserify({
                   basedir: '.',
                   debug: true,
-                  entries: ["./Build/BackgroundScript.ts"],
+                  entries: ["./Build/Control_Background.ts"],
                   cache: {},
                   packageCache: {}
               })
@@ -102,7 +102,7 @@ gulp.task('ChromeBuildJs', gulp.series(
   function () { return browserify({
                   basedir: '.',
                   debug: true,
-                  entries: ["./Build/Popup.ts"],
+                  entries: ["./Build/Control_Popup.ts"],
                   cache: {},
                   packageCache: {}
               })

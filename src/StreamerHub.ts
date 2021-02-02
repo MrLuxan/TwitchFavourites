@@ -1,34 +1,43 @@
 import {Streamer} from "./Streamer"
 import {DataStore} from "./DataStore";
+import { Settings } from "./InterfaceSettings";
 declare var chrome : any;
 
 
 export class StreamerHub
 {
+    Settings : Settings;
     Streamers : Streamer[] = [];
     
-    LoadStreamers()
+    LoadStreamers() : Promise<any>
     {
-      let sers = this.Streamers;
+      let sers = this.Streamers;      
+      return new Promise(function (resolve,reject){
+      
+        DataStore.DS.LoadData('ids')
+        .then((savedid : Array<string>) =>{ 
 
-      DataStore.DS.LoadData('ids')
-      .then((savedid : Array<string>) =>{ 
-
-        let ps : Promise<any>[]  = [];
-        savedid.forEach((id: string) => {
-          let newStream = new Streamer();
-          ps.push(newStream.SetStreamByID(id));
-          ps.push(newStream.SetUserByID(id));
-          sers.push(newStream);
+          let ps : Promise<any>[]  = [];
+          savedid.forEach((id: string) => {
+            let newStream = new Streamer();
+            ps.push(newStream.SetStreamByID(id));
+            ps.push(newStream.SetUserByID(id));
+            sers.push(newStream);
+          });
+      
+          Promise.all(ps).then((val) =>{
+            resolve([true,val]);
+            console.log('Load ok',val);
+          }).catch((error) => {
+            console.log('load error',error)
+            reject([false,error]);            
+          });
+        })
+        .catch((error) => {
+          console.log('loaderror',error)
+          reject([false,error]);            
         });
-    
-        Promise.all(ps).then((val) =>{
-          console.log('Load ok',val);
-        }).catch((error) => {
-          console.log('load error',error)
-        });
-      })
-      .catch((error) => console.log('loaderror',error));
+      });
     }
 
     SaveStreamers() : Promise<any>
@@ -100,19 +109,30 @@ export class StreamerHub
       });
     }
     
-    GetList() : Streamer[]
+    GetDisplayList() : Streamer[]
     {
         let streamerlist : Streamer[] = this.GetOnlineChannels();
-        streamerlist = streamerlist.concat(this.GetOfflineChannels());
+        if(this.Settings.ShowOffileChannelsInList){
+          streamerlist = streamerlist.concat(this.GetOfflineChannels());
+        }
         return streamerlist;
     }
 
+    NumberCompare( a : Streamer, b : Streamer) {
+      if ( a.Stream.viewers > b.Stream.viewers ){
+        return -1;
+      }
+      if ( a.Stream.viewers < b.Stream.viewers ){
+        return 1;
+      }
+      return 0;   
+    }
 
     AlphabetiseCompare( a : Streamer, b : Streamer) {
-        if ( a.User.display_name < b.User.display_name ){
+        if ( a.User.display_name.toLowerCase() < b.User.display_name.toLowerCase() ){
           return -1;
         }
-        if ( a.User.display_name > b.User.display_name ){
+        if ( a.User.display_name.toLowerCase() > b.User.display_name.toLowerCase() ){
           return 1;
         }
         return 0;
@@ -121,12 +141,24 @@ export class StreamerHub
     GetOnlineChannels() : Streamer[]
     {
         let onlineStreamers : Streamer[] = this.Streamers.filter(streamer => streamer.Stream != null);
-        return onlineStreamers.sort(this.AlphabetiseCompare);
+        
+        console.log('Sort',this.Settings.SortChannelBy);
+        
+        if(this.Settings.SortChannelBy == "A"){
+          return onlineStreamers.sort(this.AlphabetiseCompare);
+        }else{
+          return onlineStreamers.sort(this.NumberCompare);
+        }
     }
 
     GetOfflineChannels() : Streamer[]
     {
         let offlineStreamers : Streamer[] = this.Streamers.filter(streamer => streamer.Stream == null);
         return offlineStreamers.sort(this.AlphabetiseCompare);
-    }   
+    }
+
+    constructor(setting : Settings)
+    {
+      this.Settings = setting;
+    }
 }
