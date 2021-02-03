@@ -141,9 +141,6 @@ export class StreamerHub
     GetOnlineChannels() : Streamer[]
     {
         let onlineStreamers : Streamer[] = this.Streamers.filter(streamer => streamer.Stream != null);
-        
-        console.log('Sort',this.Settings.SortChannelBy);
-        
         if(this.Settings.SortChannelBy == "A"){
           return onlineStreamers.sort(this.AlphabetiseCompare);
         }else{

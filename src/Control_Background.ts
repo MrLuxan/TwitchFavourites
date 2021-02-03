@@ -73,11 +73,7 @@ export class BackgroundControl{
     });
   }
 
-
   IssueListUpdate(){
-
-    console.log("IssueListUpdate");
-
     let bgC = this;
     this.Ports.forEach(port => {
       port.postMessage(<PostMessage> {Command: PostMessageCommand.Update,
@@ -246,6 +242,8 @@ export class BackgroundControl{
     }).then(function(result) {  
       console.log('Hub Loaded');
       //console.log(result);
+
+      bgC.SetActionNumber();
 
       chrome.runtime.onConnect.addListener((port : any) => {
         bgC.NewPortConnect(port);

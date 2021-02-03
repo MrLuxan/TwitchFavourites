@@ -24,7 +24,7 @@ export class FavouriteList extends UiElement {
 	{
 		let icon = this.DomElement.querySelector('figure');
 		var rect = icon.getBoundingClientRect();		
-		let ypos : number = rect.top;
+		let ypos : number = rect.top - 10;
 
 		let tooltipHtml = `[SideBarIconTooltip.html]`;
 		this.SideBarTooltip = this.htmlToElement(tooltipHtml);
