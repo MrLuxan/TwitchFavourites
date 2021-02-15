@@ -10,10 +10,16 @@ var sourcemaps = require('gulp-sourcemaps');
 var buffer = require('vinyl-buffer');
 var zip = require('gulp-zip');
 var replace = require('gulp-replace');
+var merge = require('merge-stream');
+var clean = require('gulp-clean');
 
 var fs = require('fs');
 var GulpVars = JSON.parse(fs.readFileSync('./gulp-tasks/GulpVariables.json'))
 
+gulp.task('FirefoxPreclean', function () {
+  return gulp.src([GulpVars.FirefoxDist + '*','./Build/*'], {read: false})
+    .pipe(clean());
+});
 
 var ResizeImageTasks = [];
 [512,128,96,48].forEach(function(size) {
@@ -65,6 +71,7 @@ for (const file in insertFiles) {
 gulp.task('FirefoxInsertNoteHtml', gulp.series(CopyInHtmlTasks));
 
 gulp.task('FirefoxBuildJs', gulp.series( 
+  'FirefoxPreclean',
   function () { return gulp.src('./src/*.ts').pipe(gulp.dest('./Build/'))},
   function () { return gulp.src('./src/Firefox/*.ts').pipe(gulp.dest('./Build/'))},
   'FirefoxInsertNoteHtml',
@@ -122,10 +129,21 @@ gulp.task('FirefoxBuild',
   //Package
 );
 
-gulp.task('FirefoxPack', function(){
-  return gulp.src(GulpVars.FirefoxDist + "*")
-             .pipe(zip('Firefox.zip'))
-             .pipe(gulp.dest('Packed/'))
+gulp.task('FirefoxPack', function() {
+  var images = gulp.src([
+      GulpVars.FirefoxDist + '/images/*'
+    ])
+    .pipe(rename(function(file) {
+      file.dirname = 'images/' + file.dirname;
+    }));
+
+  return merge(gulp.src([GulpVars.FirefoxDist + '*.js',
+                         GulpVars.FirefoxDist + '*.html',
+                         GulpVars.FirefoxDist + '*.css',
+                         GulpVars.FirefoxDist + '*.json']),
+              images)
+    .pipe(zip('Firefox.zip'))
+    .pipe(gulp.dest('Packed/'))
 });
 
 gulp.task('FirefoxBuildAndPack', gulp.series(

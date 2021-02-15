@@ -10,9 +10,17 @@ var sourcemaps = require('gulp-sourcemaps');
 var buffer = require('vinyl-buffer');
 var zip = require('gulp-zip');
 var replace = require('gulp-replace');
+var merge = require('merge-stream');
+var clean = require('gulp-clean');
+
 
 var fs = require('fs');
 var GulpVars = JSON.parse(fs.readFileSync('./gulp-tasks/GulpVariables.json'))
+
+gulp.task('ChromePreclean', function () {
+  return gulp.src([GulpVars.ChromeDist + '*','./Build/*'], {read: false})
+    .pipe(clean());
+});
 
 
 var ResizeImageTasks = [];
@@ -64,7 +72,8 @@ for (const file in insertFiles) {
 
 gulp.task('ChromeInsertNoteHtml', gulp.series(CopyInHtmlTasks));
 
-gulp.task('ChromeBuildJs', gulp.series( 
+gulp.task('ChromeBuildJs', gulp.series(
+  'ChromePreclean',
   function () { return gulp.src('./src/*.ts').pipe(gulp.dest('./Build/'))},
   function () { return gulp.src('./src/Chrome/*.ts').pipe(gulp.dest('./Build/'))},
   'ChromeInsertNoteHtml',
@@ -122,11 +131,23 @@ gulp.task('ChromeBuild',
   //Package
 );
 
-gulp.task('ChromePack', function(){
-  return gulp.src(GulpVars.ChromeDist + "*")
-             .pipe(zip('Chrome.zip'))
-             .pipe(gulp.dest('Packed/'))
+gulp.task('ChromePack', function() {
+  var images = gulp.src([
+      GulpVars.ChromeDist + '/images/*'
+    ])
+    .pipe(rename(function(file) {
+      file.dirname = 'images/' + file.dirname;
+    }));
+
+  return merge(gulp.src([GulpVars.ChromeDist + '*.js',
+                         GulpVars.ChromeDist + '*.html',
+                         GulpVars.ChromeDist + '*.css',
+                         GulpVars.ChromeDist + '*.json']),
+              images)
+    .pipe(zip('Chrome.zip'))
+    .pipe(gulp.dest('Packed/'))
 });
+
 
 gulp.task('ChromeBuildAndPack', gulp.series(
   'ChromeBuild',
