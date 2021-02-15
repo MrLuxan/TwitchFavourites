@@ -11,12 +11,13 @@ export class Streamer {
     {
         return new Promise(function (resolve,reject){
             const xhr = new XMLHttpRequest();
+            xhr.withCredentials = true;
             xhr.onload = function(){
                 resolve(this);
             };
 
             xhr.onerror = function(){
-				console.log(xhr);
+				//console.log(xhr);
 				reject(new Error('Network error'));
             };
 
@@ -42,7 +43,6 @@ export class Streamer {
 					try {
 						let ChannelData : ChannelData = JSON.parse(xhr.responseText);
 						s.Stream = ChannelData.stream;
-						//console.log('SetStreamByID ' + id)
 						resolve(s.Stream);
 					} catch (error) {
 						reject(['Channel not found ' + id , error])

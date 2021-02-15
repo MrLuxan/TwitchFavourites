@@ -113,7 +113,7 @@ gulp.task('ChromeBuildJs', gulp.series(
               .pipe(sourcemaps.init({loadMaps: true}))
               //.pipe(uglify()) // not allowed to uglify chrome extension
               .pipe(sourcemaps.write('./'))
-              .pipe(gulp.dest(GulpVars.ChromeDist))}              
+              .pipe(gulp.dest(GulpVars.ChromeDist))}          
 ));
 
 

@@ -34,7 +34,7 @@ export class FavouriteList extends UiElement {
 	TitleIconMouseLeave(event : any)
 	{
 		this.SideBarTooltip.remove();
-	};
+	}
 
 	StreamerMouseEnter(event : any)
 	{
@@ -52,7 +52,6 @@ export class FavouriteList extends UiElement {
 	{
 		this.SideBarTooltip.remove();
 	}
-
 
 	UpdateList(streamerList : Streamer[])
 	{
@@ -86,8 +85,6 @@ export class FavouriteList extends UiElement {
 		}
 	}
 	
-	
-
     constructor(streamerList : Streamer[])
     {
 		super();
@@ -101,7 +98,7 @@ export class FavouriteList extends UiElement {
 		icon.onmouseenter = (event) =>{this.TitleIconMouseEnter(event)};
 		icon.onmouseleave = (event) =>{this.TitleIconMouseLeave(event)};
 		
-		const ro = new ResizeObserver(() => {this.ChangeSize()});
+		let ro = new ResizeObserver(() => {this.ChangeSize()});
 		ro.observe(this.DomElement);
 	}
 }

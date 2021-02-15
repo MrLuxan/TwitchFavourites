@@ -2,8 +2,8 @@
 import { PostMessage,PostMessageCommand } from "./InterfacePostMessage";
 import { Settings } from "./InterfaceSettings";
 import { Streamer } from "./Streamer";
+import { browserAPI } from "./browserAPI";
 
-declare var chrome : any;
 export { };
 
 export class PopupControl{
@@ -14,8 +14,6 @@ export class PopupControl{
 
 	MessageReceived(msg : PostMessage)
 	{
-		console.log(msg);
-
 		switch(msg.Command)
 		{
 			case PostMessageCommand.Setup:
@@ -55,7 +53,6 @@ export class PopupControl{
         (<HTMLElement>item).onclick = (event) =>{pc.LiveItemClick(event)};
       })
 
-      console.log(this.OnlineList.length > this.Settings.ChannelsHigh);
       if(this.OnlineList.length > this.Settings.ChannelsHigh)
       {
         let itemHight = 50;
@@ -131,7 +128,6 @@ export class PopupControl{
 
   SaveSettings()
   {
-    console.log('Saving',this.SaveSettings);
     this.Port.postMessage(<PostMessage>{Command : PostMessageCommand.SetttingsSave,
                                         Settings : this.Settings});
   }
@@ -141,7 +137,7 @@ export class PopupControl{
     let clickElement = <HTMLElement>e.target;
     let closestItem = <HTMLElement>clickElement.closest('.LiveItem');
     let streamerID = closestItem.dataset.id;
-    chrome.tabs.create({url: `https://www.twitch.tv/${streamerID}`});
+    browserAPI.tabs.create({url: `https://www.twitch.tv/${streamerID}`});
   }
 
   BuildList(streamer : Streamer) : string
@@ -180,9 +176,7 @@ export class PopupControl{
       let parent  = e.srcElement.closest('.SetttingsSubCat')
       let items : Array<HTMLElement> = parent.querySelectorAll('.FakeRadio');
       items.forEach(item => {
-        console.log(item);
         item.className = item.className.replace(" FakeCheckboxActive", "");
-        console.log(item);
       });
     }
 
@@ -222,7 +216,6 @@ export class PopupControl{
     switch(setting)
     {
         case "ShowOfflineChannels":
-          console.log("ShowOfflineChannels",value);
           this.Settings.ShowOffileChannelsInList = <boolean>value;
           break;
 
@@ -276,7 +269,7 @@ export class PopupControl{
     numberInput.onchange = (event) => { pc.NumberChange(event) };
 
 
-    this.Port = chrome.runtime.connect({name: "TwitchFavourites"});
+    this.Port = browserAPI.runtime.connect({name: "TwitchFavourites"});
 		this.Port.onMessage.addListener(function(msg : PostMessage) {	
 			pc.MessageReceived(msg);
 		});

@@ -3,9 +3,8 @@ import { PostMessage, PostMessageCommand } from "./InterfacePostMessage";
 import { Settings } from "./InterfaceSettings";
 import { Streamer } from "./Streamer";
 import { StreamerHub } from "./StreamerHub";
+import { browserAPI } from "./browserAPI";
 export { };
-
-declare var chrome : any;
 
 export class BackgroundControl{
 
@@ -45,15 +44,12 @@ export class BackgroundControl{
   SaveSettings() : Promise<any>
   {
     let bgC = this;
-
-    console.log('Saveing',bgC.Settings);
-
     return new Promise(function (resolve){
       DataStore.DS.SaveData('settings',bgC.Settings)
-      .then( ()=> {
+      .then(()=> {
         resolve(true);
        })
-      .catch( ()=> {
+      .catch(()=> {
         resolve(false);
        })
     });
@@ -62,13 +58,12 @@ export class BackgroundControl{
   StartStreamerHub() : Promise<any>
   {
     let bgC = this;
-
     return new Promise(function (resolve,reject){
       bgC.Hub = new StreamerHub(bgC.Settings);
       bgC.Hub.LoadStreamers().then((result) =>{
         resolve(result)
       }).catch((result)=>{
-        result(result);
+        reject(result);
       });
     });
   }
@@ -88,10 +83,10 @@ export class BackgroundControl{
     if(this.Settings.ShowLiveNumber)
     {        
       let online : number = this.Hub.GetOnlineChannels().length;
-      chrome.browserAction.setBadgeText({text: (online > 0 ? online.toString() : '')});
+      browserAPI.browserAction.setBadgeText({text: (online > 0 ? online.toString() : '')});
     }
     else{
-      chrome.browserAction.setBadgeText({text: ''});
+      browserAPI.browserAction.setBadgeText({text: ''});
     }
   }
 
@@ -104,8 +99,6 @@ export class BackgroundControl{
       refreshResult.forEach(element => {
         let streamer : Streamer = element[0];
         let newlyOnline = Boolean = element[1];
-
-        console.log(streamer,newlyOnline);
 
         if(newlyOnline){
           bgC.Notify(streamer); 
@@ -142,14 +135,13 @@ export class BackgroundControl{
           iconUrl: URL.createObjectURL(blob)
       };
   
-      return chrome.notifications.create(streamer.User.name, options); // , callback );
+      return browserAPI.notifications.create(streamer.User.name, options); // , callback );
     })
     .catch((error) => {console.log(error);})
   }
 
-  Alarm(){
-    console.log('Alram update');
-
+  Alarm()
+  {
     let bgC = this;
 
     this.Hub.Refresh()
@@ -175,11 +167,7 @@ export class BackgroundControl{
   NewPortConnect(port : any)
   {
     let bgC = this;
-
     port.onMessage.addListener(function(msg : PostMessage) {
-
-      console.log(msg.Command,msg);
-  
       switch(msg.Command)
       {
         case PostMessageCommand.Register:
@@ -195,8 +183,8 @@ export class BackgroundControl{
         case PostMessageCommand.Favourited:
           bgC.Hub.AddStreamer(msg.Streamer)
           .then((data) => {
-            console.log(data)
             bgC.IssueListUpdate();
+            bgC.SetActionNumber();
           })
           .catch((error) =>{
             console.log(error);
@@ -206,8 +194,8 @@ export class BackgroundControl{
         case PostMessageCommand.Unfavourited: 
           bgC.Hub.RemoveStreamer(msg.Streamer)
           .then((data) => {
-            console.log(data)
             bgC.IssueListUpdate();
+            bgC.SetActionNumber();
           })
           .catch((error) =>{
             console.log(error);
@@ -237,67 +225,27 @@ export class BackgroundControl{
 
     bgC.LoadSettings()
     .then(function() {
-      console.log('Settings Loaded');
+      //console.log('Settings Loaded');
       return bgC.StartStreamerHub();
     }).then(function(result) {  
-      console.log('Hub Loaded');
-      //console.log(result);
-
+      //console.log('Hub Loaded',result);
       bgC.SetActionNumber();
 
-      chrome.runtime.onConnect.addListener((port : any) => {
+      browserAPI.runtime.onConnect.addListener((port : any) => {
         bgC.NewPortConnect(port);
       });
 
-      chrome.notifications.onClicked.addListener(function(notificationId : string) {  
-        chrome.tabs.create({url: `https://www.twitch.tv/${notificationId}`});
+      browserAPI.notifications.onClicked.addListener(function(notificationId : string) {  
+        browserAPI.tabs.create({url: `https://www.twitch.tv/${notificationId}`});
       });
 
-      chrome.alarms.onAlarm.addListener((alarm : any) => { bgC.Alarm() });
-      chrome.alarms.create('refresh', { periodInMinutes: 1 });
-      
-      
+      browserAPI.alarms.onAlarm.addListener((alarm : any) => { bgC.Alarm() });
+      browserAPI.alarms.create('refresh', { periodInMinutes: 2 });
+    
     }).catch((error) =>{
-      console.log('Load error');
-      console.log(error);
+      console.log('Load error',error);
     });
   }
 }
 
 new BackgroundControl();
-
-
-
-/*
-
-
-
-
-chrome.runtime.onInstalled.addListener(() => {
-  console.log('onInstalled...');
-  // create alarm after extension is installed / upgraded
-  hub = new StreamerHub(null);
-  hub.LoadStreamers();
-  
-});
-
-chrome.runtime.onStartup.addListener(() => {
-  console.log('onStartup...');
-  hub = new StreamerHub(null);
-  hub.LoadStreamers();
-});
-
-
-
-// chrome.tabs.onUpdated.addListener(function(tabId : any, info  : any, tab  : any) {
-
-//   console.log(tabId,info,tab);
-
-//   // if (info.url) {
-//   //     chrome.tabs.sendMessage(tabId, {
-//   //         message: 'urlChanged'
-//   //     })
-//   // }
-// });
-
-*/

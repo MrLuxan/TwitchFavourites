@@ -1,11 +1,11 @@
 {
   "manifest_version": 2,
   "name": "Twitch Favourites",
-  "description": "Flag your favourite streams to make it easyier to find thire channels",
+  "description": "Favourite streamers to make it easier to find their channels",
   "version": "---",
   "applications": {
     "gecko": {
-      "id": "email@Robert-Walker.com"
+      "id": "TwitchFavourites@Robert-Walker.com"
     }
   },
   "icons": {
@@ -14,15 +14,20 @@
     "96": "images/Icon96.png",
     "48": "images/Icon48.png"
   },
-  "web_accessible_resources": [
-    "images/*.svg"
-  ],
-  "permissions": ["storage"],
+  "permissions": ["storage","alarms","notifications","*://api.twitch.tv/*"],
   "content_scripts": [
     {
       "matches": ["*://*.twitch.tv/*"],
       "js": ["contentscript.js"]
     }
-  ]
+  ],
+  "background": {
+    "scripts": ["backgroundscript.js"],
+    "persistent": true
+  },
+  "browser_action": {
+    "default_title": "Twitch Favourites",
+    "default_popup": "popup.html"
+  }
 
 }

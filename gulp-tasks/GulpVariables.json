@@ -3,5 +3,5 @@
     "ChromeDist": "./Chrome extension/",
     "FirefoxSrc": "./src/Firefox/",
     "FirefoxDist": "./Firefox extension/",
-    "ExtensionVersion": "2.0.0"
+    "ExtensionVersion": "0.5"
 }

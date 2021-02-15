@@ -1,8 +1,6 @@
 import {Streamer} from "./Streamer"
 import {DataStore} from "./DataStore";
 import { Settings } from "./InterfaceSettings";
-declare var chrome : any;
-
 
 export class StreamerHub
 {
@@ -17,24 +15,31 @@ export class StreamerHub
         DataStore.DS.LoadData('ids')
         .then((savedid : Array<string>) =>{ 
 
-          let ps : Promise<any>[]  = [];
-          savedid.forEach((id: string) => {
-            let newStream = new Streamer();
-            ps.push(newStream.SetStreamByID(id));
-            ps.push(newStream.SetUserByID(id));
-            sers.push(newStream);
-          });
-      
-          Promise.all(ps).then((val) =>{
-            resolve([true,val]);
-            console.log('Load ok',val);
-          }).catch((error) => {
-            console.log('load error',error)
-            reject([false,error]);            
-          });
+          if(savedid != null)
+          {
+            let ps : Promise<any>[]  = [];
+            savedid.forEach((id: string) => {
+              let newStream = new Streamer();
+              ps.push(newStream.SetStreamByID(id));
+              ps.push(newStream.SetUserByID(id));
+              sers.push(newStream);
+            });
+        
+            Promise.all(ps).then((val) =>{
+              resolve([true,val]);
+              //console.log('Load ok',val);
+            }).catch((error) => {
+              //console.log('load error',error)
+              reject([false,error]);            
+            });
+          }
+          else
+          {
+            resolve([true,'new install']);
+          }
         })
         .catch((error) => {
-          console.log('loaderror',error)
+          //console.log('loaderror',error)
           reject([false,error]);            
         });
       });
