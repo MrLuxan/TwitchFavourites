@@ -69,8 +69,39 @@ for (const file in insertFiles) {
     CopyInHtmlTasks.push(copyInHtmlTask);
   });
 }
-
 gulp.task('ChromeInsertNoteHtml', gulp.series(CopyInHtmlTasks));
+
+
+var transpileTasks = [];
+var transpileFiles = {"contentscript.js" : "./Build/Control_Content.ts",
+                      "backgroundscript.js" : "./Build/Control_Background.ts",
+                      "popup.js" : "./Build/Control_Popup.ts"};
+for (const file in transpileFiles) {
+
+    let tsFile = transpileFiles[file];
+    let jsFile = file;
+    var transpileFile = `Transpile ${tsFile} to ${jsFile}`;
+    gulp.task(transpileFile, function(){
+      return browserify({
+                  basedir: '.',
+                  debug: true,
+                  entries: [tsFile],
+                  cache: {},
+                  packageCache: {}
+              })
+              .plugin(tsify)
+              .bundle()
+              .pipe(source(jsFile))
+              .pipe(buffer())
+              .pipe(sourcemaps.init({loadMaps: true}))
+              //.pipe(uglify()) // not allowed to uglify Firefox extension
+              .pipe(sourcemaps.write('./'))
+              .pipe(gulp.dest(GulpVars.ChromeDist));
+  });
+  transpileTasks.push(transpileFile);
+}
+gulp.task('ChromeTranspileTasks', gulp.series(transpileTasks));
+
 
 gulp.task('ChromeBuildJs', gulp.series(
   'ChromePreclean',
@@ -78,57 +109,12 @@ gulp.task('ChromeBuildJs', gulp.series(
   function () { return gulp.src('./src/Chrome/*.ts').pipe(gulp.dest('./Build/'))},
   'ChromeInsertNoteHtml',
   function () { return gulp.src('./src/html/popup.*').pipe(gulp.dest(GulpVars.ChromeDist))},
-  function () { return browserify({
-                  basedir: '.',
-                  debug: true,
-                  entries: ["./Build/Control_Content.ts"],
-                  cache: {},
-                  packageCache: {}
-              })
-              .plugin(tsify)
-              .bundle()
-              .pipe(source('contentscript.js'))
-              .pipe(buffer())
-              .pipe(sourcemaps.init({loadMaps: true}))
-              //.pipe(uglify()) // not allowed to uglify chrome extension
-              .pipe(sourcemaps.write('./'))
-              .pipe(gulp.dest(GulpVars.ChromeDist))},
-  function () { return browserify({
-                  basedir: '.',
-                  debug: true,
-                  entries: ["./Build/Control_Background.ts"],
-                  cache: {},
-                  packageCache: {}
-              })
-              .plugin(tsify)
-              .bundle()
-              .pipe(source('backgroundscript.js'))
-              .pipe(buffer())
-              .pipe(sourcemaps.init({loadMaps: true}))
-              //.pipe(uglify()) // not allowed to uglify chrome extension
-              .pipe(sourcemaps.write('./'))
-              .pipe(gulp.dest(GulpVars.ChromeDist))},
-  function () { return browserify({
-                  basedir: '.',
-                  debug: true,
-                  entries: ["./Build/Control_Popup.ts"],
-                  cache: {},
-                  packageCache: {}
-              })
-              .plugin(tsify)
-              .bundle()
-              .pipe(source('popup.js'))
-              .pipe(buffer())
-              .pipe(sourcemaps.init({loadMaps: true}))
-              //.pipe(uglify()) // not allowed to uglify chrome extension
-              .pipe(sourcemaps.write('./'))
-              .pipe(gulp.dest(GulpVars.ChromeDist))}          
+  'ChromeTranspileTasks'          
 ));
 
 
 gulp.task('ChromeBuild', 
   gulp.parallel('ChromeIconResize','ChromeCopyImages','ChromeManifest','ChromeBuildJs')
-  //Package
 );
 
 gulp.task('ChromePack', function() {
