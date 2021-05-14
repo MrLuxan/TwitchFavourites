@@ -100,11 +100,11 @@ for (const file in transpileFiles) {
 gulp.task('FirefoxTranspileTasks', gulp.series(transpileTasks));
 
 gulp.task('FirefoxBuildJs', gulp.series( 
-  'FirefoxPreclean',
+  //'FirefoxPreclean',
   function () { return gulp.src('./src/*.ts').pipe(gulp.dest('./Build/'))},
   function () { return gulp.src('./src/Firefox/*.ts').pipe(gulp.dest('./Build/'))},
   'FirefoxInsertNoteHtml',
-  function () { return gulp.src('./src/html/popup.*').pipe(gulp.dest(GulpVars.FirefoxDist))},
+  function () { return gulp.src('./src/html/popup.*','./src/html/content.css').pipe(gulp.dest(GulpVars.FirefoxDist))},
   'FirefoxTranspileTasks'
 ));
 

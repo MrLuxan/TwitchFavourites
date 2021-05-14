@@ -104,11 +104,11 @@ gulp.task('ChromeTranspileTasks', gulp.series(transpileTasks));
 
 
 gulp.task('ChromeBuildJs', gulp.series(
-  'ChromePreclean',
+  //'ChromePreclean',
   function () { return gulp.src('./src/*.ts').pipe(gulp.dest('./Build/'))},
   function () { return gulp.src('./src/Chrome/*.ts').pipe(gulp.dest('./Build/'))},
   'ChromeInsertNoteHtml',
-  function () { return gulp.src('./src/html/popup.*').pipe(gulp.dest(GulpVars.ChromeDist))},
+  function () { return gulp.src(['./src/html/popup.*','./src/html/content.css']).pipe(gulp.dest(GulpVars.ChromeDist))},
   'ChromeTranspileTasks'          
 ));
 

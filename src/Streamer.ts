@@ -7,11 +7,17 @@ export class Streamer {
 	User : User;
 	Stream : Stream;
 
+
+    RequestData2(url : string, headers : any = null)
+    {
+
+    }
+
+
     RequestData(url : string, headers : any = null)
     {
         return new Promise(function (resolve,reject){
-            const xhr = new XMLHttpRequest();
-            xhr.withCredentials = true;
+            const xhr = new XMLHttpRequest();     
             xhr.onload = function(){
                 resolve(this);
             };
