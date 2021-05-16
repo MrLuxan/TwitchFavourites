@@ -104,7 +104,7 @@ gulp.task('FirefoxBuildJs', gulp.series(
   function () { return gulp.src('./src/*.ts').pipe(gulp.dest('./Build/'))},
   function () { return gulp.src('./src/Firefox/*.ts').pipe(gulp.dest('./Build/'))},
   'FirefoxInsertNoteHtml',
-  function () { return gulp.src('./src/html/popup.*','./src/html/content.css').pipe(gulp.dest(GulpVars.FirefoxDist))},
+  function () { return gulp.src(['./src/html/popup.*','./src/html/content.css']).pipe(gulp.dest(GulpVars.FirefoxDist))},
   'FirefoxTranspileTasks'
 ));
 

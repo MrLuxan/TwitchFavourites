@@ -13,7 +13,6 @@ var replace = require('gulp-replace');
 var merge = require('merge-stream');
 var clean = require('gulp-clean');
 
-
 var fs = require('fs');
 var GulpVars = JSON.parse(fs.readFileSync('./gulp-tasks/GulpVariables.json'))
 
@@ -22,6 +21,14 @@ gulp.task('ChromePreclean', function () {
     .pipe(clean());
 });
 
+gulp.task("ChromeManifest", function () {
+  return gulp.src(GulpVars.ChromeSrc+ "manifest.json")
+             .pipe(jeditor(function(json) {
+              json.version = GulpVars.ExtensionVersion;
+              return json; // must return JSON object.
+              }))
+             .pipe(gulp.dest(GulpVars.ChromeDist));
+});
 
 var ResizeImageTasks = [];
 [128,48,16].forEach(function(size) {
@@ -41,17 +48,6 @@ gulp.task('ChromeCopyImages', function(){
     return gulp.src('src/Images/*.*')
     .pipe(gulp.dest(GulpVars.ChromeDist + 'images/'));
 });
-
-
-gulp.task("ChromeManifest", function () {
-  return gulp.src(GulpVars.ChromeSrc+ "manifest.json")
-             .pipe(jeditor(function(json) {
-              json.version = GulpVars.ExtensionVersion;
-              return json; // must return JSON object.
-              }))
-             .pipe(gulp.dest(GulpVars.ChromeDist));
-});
-
 
 var CopyInHtmlTasks = [];
 var insertFiles = {FavouriteList : ['FavouriteList','FavouriteButtonSvgFilled','SideBarIconTooltip'],
