@@ -33,8 +33,6 @@ export class FavouriteItem extends UiElement {
 	{
 		let isWide = this.DomElement.offsetWidth > 100;
 
-		console.log(isWide);
-
 		if(!isWide)
 		{
 			var rect = this.DomElement.getBoundingClientRect();		
@@ -59,8 +57,6 @@ export class FavouriteItem extends UiElement {
 				this.Tooltip = this.htmlToElement(tooltipHtml);
 				document.body.append(this.Tooltip);
 			}
-
-			console.log(this.Tooltip);
 		}
 	}
 

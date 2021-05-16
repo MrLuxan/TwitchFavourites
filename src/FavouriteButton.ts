@@ -32,7 +32,7 @@ export class FavouriteButton extends UiElement {
 	GetStreamer() : Promise<any>
 	{
 		let button = this;
-		return new Promise(function(resolve,reject){
+		return new Promise(function(resolve){
 
 			if(button.ChannelStreamer == null)
 			{
@@ -80,13 +80,12 @@ export class FavouriteButton extends UiElement {
 	
 			let iconSlot = this.DomElement.querySelector('figure');
 	
-			if(!this.Favourited)
-			{
-				let iconHtml : string = `[FavouriteButtonSvg.html]`;
-				let icon : HTMLElement = this.htmlToElement(iconHtml);
-				iconSlot.innerHTML = "";
-				iconSlot.append(icon);
-			}
+
+			let iconHtml : string = (this.Favourited ? `[FavouriteButtonSvgFilled.html]` : `[FavouriteButtonSvg.html]`);
+			let icon : HTMLElement = this.htmlToElement(iconHtml);
+			iconSlot.innerHTML = "";
+			iconSlot.append(icon);
+			
 		})
 		.catch((error) => {
 			console.log(error);

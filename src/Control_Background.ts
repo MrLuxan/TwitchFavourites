@@ -228,10 +228,10 @@ export class BackgroundControl{
 
     bgC.LoadSettings()
     .then(function() {
-      console.log('Settings Loaded');
+      //console.log('Settings Loaded');
       return bgC.StartStreamerHub();
     }).then(function(result) {  
-      console.log('Hub Loaded',result);
+      //console.log('Hub Loaded',result);
       bgC.SetActionNumber();
 
       browserAPI.runtime.onConnect.addListener((port : any) => {

@@ -1,4 +1,3 @@
-import { promises } from "fs";
 import { ChannelData,Stream,Channel,Preview } from "./InterfaceStream";
 import { User,UserData} from "./InterfaceUser";
 
@@ -7,12 +6,14 @@ export class Streamer {
 	User : User;
 	Stream : Stream;
 
-
-    RequestData2(url : string, headers : any = null)
+    constructor(toCopy? : Streamer)
     {
+        if(toCopy != null)
+        {
+            Object.assign(this, JSON.parse(JSON.stringify(toCopy)));    
+        }
 
     }
-
 
     RequestData(url : string, headers : any = null)
     {

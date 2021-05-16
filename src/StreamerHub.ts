@@ -66,7 +66,8 @@ export class StreamerHub
       return new Promise(function (resolve,reject){
         if(hub.Streamers.filter(streamer => streamer.User._id == add.User._id).length == 0)
         {
-          hub.Streamers.push(add);
+          let addStreamer = new Streamer(add); // Needed as class is turned to just an object in tansfer
+          hub.Streamers.push(addStreamer);
           let resolvefunc : any = resolve;
           hub.SaveStreamers()
           .then(resolvefunc('Save ok'));
